@@ -5,8 +5,12 @@
     2. 任务重发
     3. 任务预留
     4. 持久化等
+        beanstalkd -b /var/log/beanstalkd/binlog #开启二进制日志，持久化数据，防止断电或重启丢失数据
+
+### 参考beanstalkd的faq，查看常见问题
+    [常见问题](https://github.com/beanstalkd/beanstalkd/wiki/faq)    
     
- ### 运行
+### 运行
     1. 下载安装beanstalkd服务器，然后运行composer install
     2. 在数据库创建一个order表
            CREATE TABLE `order` (
