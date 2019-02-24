@@ -2,12 +2,9 @@
 error_reporting(-1);
 ini_set('display_errors', 1);
 
-include "../../vendor/autoload.php";
+include "beanstalkd_cmd.php";
 include './Echo.php';
-function getBeanstalkd()
-{
-    return new \Pheanstalk\Pheanstalk('127.0.0.1', 11300);
-}
+
 $pheanstalkd = getBeanstalkd();
 $tubeName = 'tester';
 
@@ -77,8 +74,8 @@ $server->on('task', function($server, $task_id, $src_worker_id, $data) {
     //task进程无法调用异步io操作
     file_put_contents('./multi_task_log.txt', "[task] task called, from: {$src_worker_id}, task_id: {$task_id}, data: {$data}\n", FILE_APPEND);
 
-    //无法触发onFinish事件
-    $server->finish(['result' => 'fail', 'data' => $data]);
+    //无法触发onFinish事件，这个没搞明白。如果不使用beanstalkd服务，则可以正常触发onFinish事件
+    // $server->finish(['result' => 'fail', 'data' => $data]);
     if(mt_rand(1, 100) > 10) {
         $server->finish(['result' => 'success', 'data' => $data]) ;
     } else {

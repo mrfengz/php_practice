@@ -1,4 +1,4 @@
-#!/Applications/MAMP/bin/php/php7.0.15/bin/php
+#!/usr/bin/php
 
 <?php
 include '../../vendor/autoload.php';
