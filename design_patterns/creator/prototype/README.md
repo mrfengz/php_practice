@@ -1,5 +1,5 @@
 ## 先看uml图
-    ![原型](https://github.com/mrfengz/php_practice/blob/master/design_patterns/creator/prototype/prototype_uml.jpg)
+   ![原型](https://github.com/mrfengz/php_practice/blob/master/design_patterns/creator/prototype/prototype_uml.jpg)
 - 实现原理：利用php的魔术方法__clone()实现。但是注意新创建的实例副本不会调用构造方法。
     
 - 使用场景：创建某个原型对象的多个实例时，就可以使用原型模式。(比如研究果蝇雌雄变异，仅需要雌雄两个原型作为基础，变异则是克隆体)
