@@ -1,5 +1,4 @@
 ## 先看uml图
-    
     ![原型](https://github.com/mrfengz/php_practice/blob/master/design_patterns/creator/prototype/prototype_uml.jpg)
 - 实现原理：利用php的魔术方法__clone()实现。但是注意新创建的实例副本不会调用构造方法。
     
