@@ -1,5 +1,7 @@
 ##shell笔记
 
+[教程](http://www.newthinktank.com/2016/06/shell-scripting-tutorial/)
+
 ## 变量
 	
 	分为系统变量和自定义变量
