@@ -83,3 +83,22 @@
         实现：通过复制原型实例创建新对象。
         作用：原型设计模式通过使用克隆减少实例化对象的开销
     5. 单例  
+    
+## 结构型设计模式
+    结构性设计模式主要研究的是如何组合对象和类，来构成更大的结构。
+
+    1. 适配器模式(Adapter)
+        组合优于继承。参与者之间绑定更宽松，在重用、结构、修改等方面有很多优点。
+        就像要给手机充电一样，必须用usb数据线，将电脑或者插座插槽适配成为适合手机的端口。(功能一样，形式不同)
+        示例：网站--手机/PC端布局. 货币兑换
+        
+        UML图:
+        ![部门原型](https://github.com/mrfengz/php_practice/blob/master/design_patterns/structure/adapter.jpg)
+
+    2. 桥接模式(Bridge)
+    3. 组合模式(Composite)
+    4. 装饰器模式(Decorator)
+    5. 外观模式(Pacade)
+    6. 享元模式(Flyweight)
+    7. 代理模式(Proxy)
+    
