@@ -98,6 +98,14 @@
     2. 桥接模式(Bridge)
     3. 组合模式(Composite)
     4. 装饰器模式(Decorator)
+        为一个已有的结构增加“装饰”,而不影响其它其它对象。
+        适配器：为现有结构增加一个适配器类，用来处理不兼容的接口。
+        装饰器：向现有对象增加对象。抽象类(装饰器Decorator)继承另一个抽象类(Component)
+        Component想成是空房间，地毯和家具看成是具体的装饰器。
+        
+        UML图：
+        ![装饰器类图](https://github.com/mrfengz/php_practice/blob/master/design_patterns/structure/decorator_1.png)
+
     5. 外观模式(Pacade)
     6. 享元模式(Flyweight)
     7. 代理模式(Proxy)
