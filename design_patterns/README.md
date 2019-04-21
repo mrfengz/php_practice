@@ -126,6 +126,9 @@
         使用了一个类方法templateMethod()，是一个抽象类的具体方法，这个方法的具体作用是对抽象方法序列排序。但具体实现留给具体类来完成。定义了操作中算法的“骨架”。
         类似与婚礼司仪的程序，但是具体形式可以由自己商量
         
+        UML图
+        ![模板方法类图](https://github.com/mrfengz/php_practice/blob/master/design_patterns/behavior/template/template_method1.png)
+        
         使用场景：已经明确算法的一些步骤，不过这些步骤可以采用多种不同的方法实现，就可以使用模板方法。
     访问者模式 (Visitor)
     
