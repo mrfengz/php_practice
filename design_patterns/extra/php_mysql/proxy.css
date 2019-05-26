@@ -1,0 +1,24 @@
+@charset "UTF-8";
+/*CSS document*/
+
+body {
+    margin-left: 20px;
+    font-family: Verdana, Geneva, san-serif;
+    background-color: #efecca;
+}
+
+header {
+    font-family: "Arial Black", Gadget, sans-serif;
+    font-size: 24px;
+    color: #002f2f;
+}
+
+#entry {
+    font-size: 11px;
+    color:#046380;
+}
+
+.subhead{
+    font-size: 16px;
+    font-family: Verdana, Geneva, sans-serif;
+}
