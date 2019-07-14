@@ -67,11 +67,35 @@
 
 
 ## 算法复杂度表示方法
-    f(n) 	Name
-    (1) 	Constant
-    logn	Logarithmic
-    (n) 	Linear
-    nlogn	Log Linear
-    n^2 	Quadratic
-    n^3 	Cubic
-    2^n 	Exponential
+    通常使用时间和空间复杂度评估算法。
+    时间复杂度：评估关键操作需要的步数.经常用O表示
+    空间复杂度：评估算法整个生命周期需要的内存空间。
+    (n) 	Name
+    O(1) 	Constant
+    O(logn)	Logarithmic
+    O(n) 	Linear
+    O(nlogn)	Log Linear
+    o(n^2) 	Quadratic
+    O(n^3) 	Cubic
+    O(2^n) 	Exponential
+    
+  ## PHP数据结构
+  SPL。核心扩展，无需安装。
+  SPL提供的数据结构：
+    Double linked lists: 对应 SplDoublyLinkedList
+    Stack:  对应 SplStack, 底层是SplDoublyLinkedList
+    Queue:  对应 SplQueue, 底层是SplDoublyLinkedList
+    Heaps:  对应 SplHeap, 还支持SplMaxHeap 和 SplMinHeap
+    Priority queue:  对应  SplPriorityQueue, 底层是SplHeap
+    Arrays:  对应 SplFixedArray
+    Map:  对应 SplObjectStorage
+    
+   #### Array
+   实质是HashMap 
+   可以用作array, list(vector), has table, dictionary, collection, stack, queue, trees
+   
+   索引数组：如果下表连续，可以使用SplFixedArray数组，更快、更省内存
+   
+   关联数组：hash table
+   struct: 可以使用关联数组或者对象，对象稍慢一些，但是比数组节省内存。
+   set: $arr[] = 1; $arr[] = 3; 可以使用 array_merge(), array_diff(), array_intersect()实现并集、差集和交集操作
