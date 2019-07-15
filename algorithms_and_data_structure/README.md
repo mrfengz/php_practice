@@ -99,3 +99,16 @@
    关联数组：hash table
    struct: 可以使用关联数组或者对象，对象稍慢一些，但是比数组节省内存。
    set: $arr[] = 1; $arr[] = 3; 可以使用 array_merge(), array_diff(), array_intersect()实现并集、差集和交集操作
+   
+   #### link
+       data/next(指针)
+       
+       单向链表：只有一个link
+       双向链表：有两个links
+       闭合 ：最后一个节点的next指向首节点
+       多向节点：有多个links
+       
+       常用操作：
+        插入 insert
+        删除 delete
+        搜索 search  
