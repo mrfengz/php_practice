@@ -110,6 +110,81 @@ class LinkedList
         }
     }
 
+    /**
+     * 在某个节点之后插入新节点
+     *     当前节点不为空
+     *     当前节点next为newNode,原当前节点的next改为newNode的next
+     * @param  string|null $data  节点data
+     * @param  string|null $query 要查找的节点数据
+     */
+    public function insertAfter(string $data = null, string $query = null) {
+        $newNode = new ListNode($data);
+
+        if ($this->_firstNode) {
+            $nextNode = null;
+            $currentNode = $this->_firstNode;
+            // 当前节点不为空
+            while($currentNode !== null) {
+                if ($currentNode->data === $query) {
+                    // 下一个节点不为空，则newnode->next设为nextNode
+                    if ($nextNode !== null) {
+                        $newNode->next = $nextNode;
+                    }
+                    // 当前节点的next只想newNode
+                    $currentNode->next = $newNode;
+                    $this->_totalNodes++;
+                    break;
+                }
+                $currentNode = $currentNode->next;
+                $nextNode = $currentNode->next;
+            }
+        }
+    }
+
+    /**
+     * 删除首节点
+     * @return [type] [description]
+     */
+    public function deleteFirst()
+    {
+        // 首节点不为空
+        if ($this->_firstNode !== null) {
+            // 首节点是否有next节点
+            if ($this->_firstNode->next !== null) {
+                $this->_firstNode = $this->_firstNode->next;
+            } else {
+                $this->_firstNode = null;
+            }
+            $this->_totalNodes--;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 删除最后一个节点
+     * @return [type] [description]
+     */
+    public function deleteLast() 
+    {
+        if ($this->_firstNode) {
+            $currentNode = $this->_firstNode;
+            if ($current->next === null) {  //删除首节点
+                $this->_firstNode = null;
+            } else {
+                $prevNode = null;
+                while($currentNode->next !== null) {
+                    $prevNode = $currentNode;
+                    $currentNode = $currentNode->next;
+                }
+                $prevNode->next = null;   
+            }
+            $this->_totalNodes--;
+            return true;
+        }
+        return false;
+    }
+
     public function display()
     {
         echo "Total book titles: " . $this->_totalNodes . PHP_EOL;
