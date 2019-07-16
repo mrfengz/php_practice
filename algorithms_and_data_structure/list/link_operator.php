@@ -94,10 +94,10 @@ class LinkedList
     {
         $newNode = new ListNode($data);
 
-        if($this->_firstNode) {
+        if ($this->_firstNode) {
             $previous = null;
             $currentNode = $this->_firstNode;
-            while($currentNode->next !== null) {
+            while ($currentNode->next !== null) {
                 if ($currentNode->data === $query) {
                     $newNode->next = $currentNode;
                     $previous->next = $newNode;
@@ -114,17 +114,18 @@ class LinkedList
      * 在某个节点之后插入新节点
      *     当前节点不为空
      *     当前节点next为newNode,原当前节点的next改为newNode的next
-     * @param  string|null $data  节点data
+     * @param  string|null $data 节点data
      * @param  string|null $query 要查找的节点数据
      */
-    public function insertAfter(string $data = null, string $query = null) {
+    public function insertAfter(string $data = null, string $query = null)
+    {
         $newNode = new ListNode($data);
 
         if ($this->_firstNode) {
             $nextNode = null;
             $currentNode = $this->_firstNode;
             // 当前节点不为空
-            while($currentNode !== null) {
+            while ($currentNode !== null) {
                 if ($currentNode->data === $query) {
                     // 下一个节点不为空，则newnode->next设为nextNode
                     if ($nextNode !== null) {
@@ -165,24 +166,104 @@ class LinkedList
      * 删除最后一个节点
      * @return [type] [description]
      */
-    public function deleteLast() 
+    public function deleteLast()
     {
         if ($this->_firstNode) {
             $currentNode = $this->_firstNode;
-            if ($current->next === null) {  //删除首节点
+            if ($currentNode->next === null) {  //删除首节点
                 $this->_firstNode = null;
             } else {
                 $prevNode = null;
-                while($currentNode->next !== null) {
+                while ($currentNode->next !== null) {
                     $prevNode = $currentNode;
                     $currentNode = $currentNode->next;
                 }
-                $prevNode->next = null;   
+                $prevNode->next = null;
             }
             $this->_totalNodes--;
             return true;
         }
         return false;
+    }
+
+    /**
+     * 查找并删除指定节点
+     *  判断首节点是否为空，如果为空，直接返回
+     *  首节点不为空，开始循环判断
+     *
+     * @param string|null $data
+     */
+    public function delete(string $data = null)
+    {
+        if ($this->_firstNode) {
+            $currentNode = $this->_firstNode;
+            $prevNode = null;
+            while($currentNode !== null) {
+                if ($currentNode->data === $data) {
+                    if ($currentNode->next!== null) {
+                        $prevNode->next = $currentNode->next;
+                    } else {
+                        $prevNode->next = null;
+                    }
+                    $this->_totalNodes--;
+                    break;
+                }
+                $prevNode = $currentNode;
+                $currentNode = $currentNode->next;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * [1, 2, 3]
+     * current = 1 , next=2
+     * current->next = null;
+     * reversedLink = 1
+     *
+     * current = 2, next=3
+     * current->next = 1
+     * reversedLink =  2 - 1
+     *
+     * current = 3, next = null
+     * current->next = 2 - 1
+     * reversedLink = 3 - 2 - 1
+     *
+     * 伪代码
+     *  prev = null
+     * current = first_node;
+     * next = null;
+     * while(current!=null){
+            next = current->next;
+            current->next =prev;
+            prev = current;
+            current = next;
+     * }
+     */
+    public function reverse()
+    {
+        if ($this->_firstNode !== null) {
+            //下一个节点不为空
+            if($this->_firstNode->next !== null) {
+                $reversedList = null;
+                $next = null;
+                $currentNode = $this->_firstNode;
+                //当前节点不为空
+                while($currentNode != null) {
+                    //取下一个节点
+                    $next = $currentNode->next;
+                    //当前节点的下一个节点置为反转后的link
+                    $currentNode->next = $reversedList;
+                    //将当前节点放入到l反转后的ink中
+                    $reversedList = $currentNode;
+                    //进入下一个节点
+                    $currentNode = $next;
+                }
+
+                $this->_firstNode = $reversedList;
+            }
+        }
     }
 
     public function display()
