@@ -97,11 +97,12 @@ class LinkedList
         if ($this->_firstNode) {
             $previous = null;
             $currentNode = $this->_firstNode;
-            while ($currentNode->next !== null) {
+            while ($currentNode !== null) {
+            	echo $currentNode->data . PHP_EOL;
                 if ($currentNode->data === $query) {
                     $newNode->next = $currentNode;
                     $previous->next = $newNode;
-                    $this->_firstNode++;
+                    $this->_totalNodes++;
                     break;
                 }
                 $previous = $currentNode;
@@ -266,6 +267,27 @@ class LinkedList
         }
     }
 
+	/**
+	 * 获取第n个节点
+	 * 	循环节点，判断当前节点计数值是否与指定的值相同
+	 * @param int $n
+	 * @return null
+	 */
+    public function getNthNode(int $n = 0)
+	{
+		$count = 1;
+		if ($this->_firstNode !== null) {
+			$currentNode = $this->_firstNode;
+			while($currentNode !== null) {
+				if ($count === $n) {
+					return $currentNode;
+				}
+				$count++;
+				$currentNode = $currentNode->next;
+			}
+		}
+	}
+
     public function display()
     {
         echo "Total book titles: " . $this->_totalNodes . PHP_EOL;
@@ -278,8 +300,17 @@ class LinkedList
     }
 }
 
-// $bookTitles = new LinkedList();
-// $bookTitles->insert("Introduction to Algorithm");
-// $bookTitles->insert("Introduction to PHP and Data Structures");
-// $bookTitles->insert("Programing Intelligence");
-// $bookTitles->display();
+$bookTitles = new LinkedList();
+$bookTitles->insert("Introduction to Algorithm");
+$bookTitles->insert("Introduction to PHP and Data Structures");
+$bookTitles->insert("Programing Intelligence");
+$bookTitles->insertAtFirst("Mediawiki Administative tutorial guide");
+$bookTitles->insertBefore("Introduction to Calculus", "Programing Intelligence");
+$bookTitles->insertBefore("Introduction to Calculus", "Programing Intelligence");
+$bookTitles->display();
+$bookTitles->deleteFirst();
+$bookTitles->deleteLast();
+$bookTitles->delete("Introduction to PHP and Structures");
+$bookTitles->reverse();
+$bookTitles->display();
+echo "2th Item is : " . $bookTitles->getNthNode(2)->data;
