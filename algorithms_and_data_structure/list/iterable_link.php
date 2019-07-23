@@ -22,7 +22,7 @@ class ListNode
 }
 
 
-class LinkedList
+class LinkedList implements Iterator
 {
     private $_firstNode = null;
     private $_totalNodes = 0;
@@ -57,7 +57,7 @@ class LinkedList
 
     public function valid()
     {
-        return $this->current !== null;
+        return $this->_currentNode !== null;
     }
 
     /**
@@ -138,7 +138,6 @@ class LinkedList
             $previous = null;
             $currentNode = $this->_firstNode;
             while ($currentNode !== null) {
-                echo $currentNode->data . PHP_EOL;
                 if ($currentNode->data === $query) {
                     $newNode->next = $currentNode;
                     $previous->next = $newNode;
@@ -348,10 +347,12 @@ $bookTitles->insertAtFirst("Mediawiki Administative tutorial guide");
 $bookTitles->insertBefore("Introduction to Calculus", "Programing Intelligence");
 $bookTitles->insertBefore("Introduction to Calculus", "Programing Intelligence");
 
+// $bookTitles->display();die;
+
 foreach($bookTitles as $title) {
     echo $title . "\n";
 }
-
-
-
-
+echo PHP_EOL;
+for($bookTitles->rewind(); $bookTitles->valid();$bookTitles->next()){
+    echo $bookTitles->current()."\n";
+}
