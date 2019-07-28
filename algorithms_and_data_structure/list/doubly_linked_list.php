@@ -71,7 +71,7 @@ class DoublyLinkedList
     public function insertAtLast(string $data = null)
     {
         $newNode = new ListNode($data);
-        if($this->_firstNode === null) {
+        if ($this->_firstNode === null) {
             $this->_firstNode = &$newNode;
             $this->_lastNode = $newNode;
         } else {
@@ -107,12 +107,20 @@ class DoublyLinkedList
         if ($this->_firstNode) {
             $previous = null;
             $currentNode = $this->_firstNode;
-            while($currentNode !== null) {
+            while ($currentNode !== null) {
                 if ($currentNode->data === $query) {
                     $newNode->next = $currentNode;
+                    if ($previous !== null) {
+                        $previous->next = $newNode;
+                        $newNode->prev = $previous;
+                    } else {
+                        $newNode->prev = null;
+                    }
+                    if ($currentNode === $this->_firstNode) {
+                        $this->_firstNode = $newNode;
+                    }
+
                     $currentNode->prev = $newNode;
-                    $previous->next = $newNode;
-                    $newNode->prev = $previous;
                     $this->_totalNode++;
                     break;
                 }
@@ -136,14 +144,15 @@ class DoublyLinkedList
      */
     public function insertAfter(string $data = null, string $query = null)
     {
-        $newNode = new ListNode();
+        $newNode = new ListNode($data);
         if ($this->_firstNode) {
             $nextNode = null;
             $currentNode = $this->_firstNode;
-            while($currentNode!== null) {
+            while ($currentNode !== null) {
                 if ($currentNode->data === $query) {
                     if ($nextNode !== null) {
                         $newNode->next = $nextNode;
+                        $nextNode->prev = $newNode;
                     }
                     //如果实在最后一个节点后插入，则把新节点变为最后一个节点
                     if ($currentNode === $this->_lastNode) {
@@ -151,7 +160,6 @@ class DoublyLinkedList
                     }
 
                     $currentNode->next = $newNode;
-                    $nextNode->prev = $newNode;
                     $newNode->prev = $currentNode;
                     $this->_totalNode++;
                     break;
@@ -162,20 +170,100 @@ class DoublyLinkedList
         }
     }
 
-    public function display()
+    /**
+     * 删除首节点
+     *  判断是首节点的next节点是否存在
+     * @return bool
+     */
+    public function deleteFirst()
     {
-        echo "总共节点数：" . $this->_totalNode . PHP_EOL;
-        if($this->_firstNode !== null) {
+        if ($this->_firstNode) {
+            $current = $this->_firstNode;
+            if ($current->next !== null) {
+                $this->_firstNode = $current->next;
+                $this->_firstNode->prev = null;
+            } else {
+                $this->_firstNode = null;
+            }
+            $this->_totalNode--;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 删除尾节点
+     * @return bool
+     */
+    public function deleteLast()
+    {
+        if ($this->_lastNode !== null) {
+            if ($this->_lastNode->prev !== null) {
+                $this->_lastNode = $this->_lastNode->prev;
+                $this->_lastNode->next = null;
+            } else {
+                $this->_firstNode = null;
+                $this->_lastNode = null;
+           }
+           $this->_totalNode--;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 查找并删除某节点
+     *  查找到节点，并获取前一个和后一个节点，将前一个节点的next设置为后一个节点，后一个节点的prev设置为前一个节点
+     * @param string|null $query
+     */
+    public function delete(string $query = null)
+    {
+        if ($this->_firstNode !== null) {
+            $previous = null;
             $currentNode = $this->_firstNode;
-            while($currentNode) {
-                if ($currentNode === $this->_lastNode) {
+            while($currentNode !== null) {
+                if ($currentNode->data === $query) {
+                    if ($currentNode->next !== null) {
+                        $previous->next = $currentNode->next;
+                        $currentNode->next->prev = $previous;
+                    } else {
+                        $currentNode->next = null;
+                    }
+                    $this->_totalNode--;
                     break;
-                    //echo $currentNode->data . PHP_EOL;
                 }
-                echo $currentNode->data. PHP_EOL;
+                $previous = $currentNode;
                 $currentNode = $currentNode->next;
             }
-            echo $currentNode->data . PHP_EOL;
+        }
+    }
+
+    /**
+     * 从首节点开始展示链表
+     */
+    public function displayForward()
+    {
+        echo "Total book titles: " . $this->_totalNode . "\n";
+        $currentNode = $this->_firstNode;
+        // print_r($currentNode);
+        while($currentNode !== null) {
+            echo $currentNode->data . "\n";
+            $currentNode = $currentNode->next;
+        }
+    }
+
+    /**
+     * 从链表末尾开始展示链表
+     */
+    public function displayBackward()
+    {
+        echo "Total book titles: " . $this->_totalNode . "\n";
+        $currentNode = $this->_lastNode;
+        while($currentNode !== null) {
+            // print_r($currentNode);
+            // echo PHP_EOL;
+            echo $currentNode->data . "\n";
+            $currentNode = $currentNode->prev;
         }
     }
 }
@@ -185,4 +273,5 @@ $linkedList->insertAtFirst("first Node");
 $linkedList->insertAtLast("Last Node");
 $linkedList->insertAfter("After Node", "Last Node");
 $linkedList->insertBefore("before Node", "first Node");
-$linkedList->display();
+$linkedList->displayForward();
+$linkedList->displayBackward();
