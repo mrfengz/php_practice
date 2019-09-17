@@ -119,3 +119,21 @@
       在开头或结尾删除  O(1)                   O(1)
       查询              O(n)                   O(n)
       访问              O(n)                   O(n)
+      
+#### 栈和堆
+    Stack: 
+        特点： 先进后出(FILO), 意味着它只有一端。
+        入栈：push操作->top
+            push(1) -> top: 1
+            push(2) -> top: 2
+            push(3) -> top: 3
+        出栈：pop操作
+            pop() -> 3
+        
+        常用操作：
+            pop(): 添加一个元素到stack的top
+            push()：从stack的top移出一个元素
+            top()：获取stack的top位置元素，不移出stack
+            isEmpty()：检查stack是否为空    
+               
+            
