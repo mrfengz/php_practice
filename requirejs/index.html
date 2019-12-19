@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>require js学习</title>
+	<!-- 1 如果alert在上边，这家伙会阻塞浏览器渲染下边的内容 -->
+	<!-- <script src="a.js"></script> -->
+
+	<!-- 引入require.js后，会发现他没有阻塞显示 页面内容 -->
+	<script data-main="main" src="https://cdn.bootcss.com/require.js/2.3.6/require.js"></script>
+ 
+	<script>
+		require(["math", "a", "define_depency"], function(math){
+			alert(math.add(1, 6));
+		})
+	</script>
+</head>
+<body>
+	页面内容
+
+	<h4>require js的优点</h4>
+	<ul>
+		<li>防止阻塞</li>
+		<li>使用自动调用方式加载js，不用写很多script引入 </li>
+	</ul>
+
+	<h4>基本API</h4>
+	<p>require会定义三个变量：define,require,requirejs，其中require === requirejs，一般使用require更简短</p>
+	<ol>
+		<li>define 从名字就可以看出这个api是用来定义一个模块</li>
+		<li>require 加载依赖模块，并执行加载完后的回调函数</li>
+	</ol>
+	<code>
+		require(['js/a', 'js/b'], callback(){
+			console.log('加载完成后回调方法');
+		})
+	</code>
+
+	<h4>加载文件</h4>
+	<p>require.config({
+		paths: {
+			"jquery": ["url-remote", "local/js/jquery"],
+			"a": "local/js/a"
+		}
+	})</p>
+
+	<p>
+		require(["jquery", "a"], function($){
+			$(function(){
+				alert("加载完毕")
+			})
+		})
+	</p>
+	<ol>
+		<li>jquery配置会先去加载远程的jquery,加载不成功加载本地jquery</li>
+		<li>回调函数的变量$, 是依赖于jquery模块的变量输出</li>
+		<li>全局配置：新建一个main.js文件，写入require.config({})配置信息，然后
+			<p>{script data-main="main" src="js/require"}{/script}</p>
+			<p>data-main="js/main"注意不需要加.js, 且表示将baseUrl设置为了js, 相当于 require.config({baseUrl: 'js'}), require(['jquery'])就相当于加载 js/jquery.js文件了</p>
+		</li>
+	</ol>
+
+	<h4>第三方模块</h4>
+	<p>require加载的文件需要符合AMD规范，旧的js文件很多不符合，可以使用shim处理</p>
+	<code>
+		require.config({
+		    shim: {
+		        "underscore" : {
+		            exports : "_";
+		        },
+		        "jquery.form" : {
+		            deps : ["jquery"]
+		        } //可以简写为 jquery.form: ["jquery"]
+		    }
+		})
+	</code>
+</body>
+
+</html>
