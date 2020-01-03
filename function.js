@@ -37,3 +37,90 @@ function removeFromSet(set, values) {
 function getMicrotime() {
 	return (new Date()).getTime();
 }
+
+/**
+ * 生成一个 0-below-1 之间的数字
+ * @param  {[type]} below [description]
+ * @return {[type]}       [description]
+ */
+function randomInteger(below) {
+	return Math.floor(Math.random() * below);
+}
+
+/**
+ * 随机返回数组的一个元素
+ * @param  {array} array 数组
+ * @return {mixed}       数组元素
+ */
+function randomElement(array) {
+	if (array.length == 0)
+		throw new Error("随机元素，数组不能为空");
+	return array[randomInteger(array.length)];
+}
+
+/**
+ * 过滤词语
+ * @param  {string}  text 要过滤的词语
+ * @return {Boolean}      [description]
+ */
+function isAcceptable(text) {
+	var blackWords = ["ape", "monkey", "simian", "evolution"];
+	var pattern = new RegExp(blackWords.join("|"), 'i');
+	return !pattern.test(text);
+}
+
+/**
+ * 将字符串按行分割
+ * @param  {string} string 要分割的字符串
+ * @return {array}        分割后的行数组
+ */
+function splitLines(string) {
+	return string.split(/\r?\n/);
+}
+
+/**
+ * 简单的解析INI文件方法
+ * @param  {string} string ini文件内容
+ * @return {array}        处理后的数组
+ */
+function parseINI(string) {
+	var lines = splitLines(string);
+	var categories = [];
+
+	function newCategory(name) {
+		var cat = {name: name, fields: []};
+		categories.push(cat);
+		return cat;
+	}
+
+	var currentCategory = newCategory("TOP");
+
+	// todo
+	forEach(lines, function(line)) {
+		var match;
+		// 空格 + ;，忽略
+		if (/^\s*(;.*)?$/.test(line))
+			return ;
+		else if (match = line.match(/^\[(.*)\]$/)){	//[]
+			currentCategory = newCategory(match[1]);
+		} else if (match = line.match(/^(\w+)=(.*)$/)) {
+			currentCategory.fields.push({name: match[1], value: match[2]});
+		} else {
+			throw new Error("Line '" + line + "' is invalid");
+		}
+	}
+
+	return categories;
+}
+
+/**
+ * 对for 进行封装
+ * @param  {object|array}   array    对象或者数据，可以循环的家伙
+ * @param  {Function} callback 回调方法
+ * @return {null}            null
+ */
+function forEach(array, callback) {
+	for(var i in array) {
+		callback(array[i]);
+	}
+}
