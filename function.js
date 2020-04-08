@@ -114,13 +114,40 @@ function parseINI(string) {
 }
 
 /**
- * 对for 进行封装
+ * 对for循环 进行封装
  * @param  {object|array}   array    对象或者数据，可以循环的家伙
  * @param  {Function} callback 回调方法
  * @return {null}            null
  */
 function forEach(array, callback) {
-	for(var i in array) {
+	for(let i=0; i<array.length; i++) {
 		callback(array[i]);
 	}
+}
+
+// 对for in 进行封装。
+// 数组和对象都可以，为enumerable对象, callback(key, value)
+function forEachIn(args, callback){
+	for(var i in args) {
+		callback(i, args[i]);
+	}
+}
+
+// 原生js创建元素
+function dom(name, attributes/*, children ...*/) {
+	var node = document.createElement(name);
+	if (attributes) {
+		forEachIn(attributes, function(name, value){
+			node.setAttribute(name, value);
+		});
+	}
+
+	for(var i=2; i<arguments.length; i++) {
+		var child = arguments[i];
+		if (typeof child == 'string') {
+			child = document.createTextNode(child);
+		}
+		node.appendChild(child);
+	}
+	return node;
 }
