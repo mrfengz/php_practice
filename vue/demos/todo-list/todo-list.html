@@ -4,156 +4,158 @@
 	<meta charset="UTF-8">
 	<title>todo清单</title>
 	<link rel="stylesheet" type="text/css" href="js/libs/bootstrap-3.3.7/css/bootstrap.min.css">
-	<script src="js/libs/require.js" ></script> 
+	<script src="js/libs/require.js" ></script>
 	<!-- defer async="true" -->
 	<script src="js/main.js"></script>
 </head>
 <body>
-	<div id="nav">
-		<nav class="navbar navbar-default" role="navigation">
-		    <div class="container-fluid">
-		    <div class="navbar-header">
-		        <a class="navbar-brand" href="#">vue-清单练习1</a>
-		    </div>
-		    <div>
-		        <ul class="nav navbar-nav">
-		            <li class="active"><a href="#">iOS</a></li>
-		            <li><a href="#">SVN</a></li>
-		            <li class="dropdown">
-		                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-		                    Java
-		                    <b class="caret"></b>
-		                </a>
-		                <ul class="dropdown-menu">
-		                    <li><a href="#">jmeter</a></li>
-		                    <li><a href="#">EJB</a></li>
-		                    <li><a href="#">Jasper Report</a></li>
-		                    <li class="divider"></li>
-		                    <li><a href="#">分离的链接</a></li>
-		                    <li class="divider"></li>
-		                    <li><a href="#">另一个分离的链接</a></li>
-		                </ul>
-		            </li>
-		        </ul>
-		    </div>
-		    </div>
-		</nav>
-	</div>
+<div id="nav">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">vue-清单练习1</a>
+			</div>
+			<div>
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">iOS</a></li>
+					<li><a href="#">SVN</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							Java
+							<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#">jmeter</a></li>
+							<li><a href="#">EJB</a></li>
+							<li><a href="#">Jasper Report</a></li>
+							<li class="divider"></li>
+							<li><a href="#">分离的链接</a></li>
+							<li class="divider"></li>
+							<li><a href="#">另一个分离的链接</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>
 
-	<div id="content">
-		<div class="content-left">
-			<div class="row" id="post">
-				<div class="col-md-offset-2 col-md-4">
-					<form class="form-horizontal" role="form">
-					  <div class="form-group">
-					    <label for="title" class="col-sm-2 control-label">标题</label>
-					    <div class="col-sm-10">
-					       <input type="text" class="form-control" v-model="title" id="title" placeholder="标题">
-					    </div>
-					  </div>
-					  <div class="form-group">
-					    <label for="content" class="col-sm-2 control-label">内容</label>
-					    <div class="col-sm-10">
-					       <textarea class="form-control" v-model="content" id="content" placeholder="内容"></textarea>
-					    </div>
-					  </div>
-					 
-					  <div class="form-group">
-					    <div class="col-sm-offset-2 col-sm-10">
-					       <button type="button" @click="savePost" class="btn btn-default">发布</button>
-					       <button type="button" @click="getList" class="btn btn-default">获取列表</button>
-					    </div>
-					  </div>
-					</form>
+<div id="content">
+	<div class="content-left">
+		<div class="row" id="post">
+			<div class="col-md-offset-2 col-md-4">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="title" class="col-sm-2 control-label">标题</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="title" id="title" placeholder="标题">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="content" class="col-sm-2 control-label">内容</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" v-model="content" id="content" placeholder="内容"></textarea>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="button" @click="savePost" class="btn btn-default">发布</button>
+							<button type="button" @click="getList" class="btn btn-default">获取列表</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-offset-1 col-md-5">
+				<!-- 预览 -->
+				<div id="preview" style="white-space: pre-line;">
+					<h4>预览</h4>
+					<b>{{ title }}</b>
+					<p> {{ content }}</p>
 				</div>
-				<div class="col-md-offset-1 col-md-5">
-					<!-- 预览 -->
-					<div id="preview" style="white-space: pre-line;">
-						<h4>预览</h4>
-						<b>{{ title }}</b>
-						<p> {{ content }}</p>
-					</div>
-					<hr>
-					<div>
-						<h4>列表</h4>
-						<todo-item
-						v-for="(item, index) in todoList"
-						v-bind:item="item"
-						v-bind:index="index"
-						></todo-item>
-					</div>
+				<hr>
+				<div>
+					<h4>列表</h4>
+					<todo-item
+							v-for="(item, index) in todoList"
+							v-bind:item="item"
+							v-bind:index="index"
+							v-on:remove="todoList.splice(index, 1)"
+					></todo-item>
 				</div>
 			</div>
 		</div>
-		<div class="content-right"></div>
 	</div>
+	<div class="content-right"></div>
+</div>
 
 
-	<script>
-		require(["jquery", "vue", "bootstrap"], function($, Vue, Bootstrap){
 
-			$(window).on('beforeunload', function(event){
-				if (window.localStorage) {
-					if (post.todoList.length) {
-						//  保存为 "a=age&b=baby#a=baby"
-						localStorage.setItem('post-list', post.todoList.map(function(obj){
-							return $.param(obj);
-						}).join('#'));
-						alert(666);
-					}
-					
+<script>
+	require(["jquery", "vue", "bootstrap"], function($, Vue, Bootstrap){
+
+		$(window).on('beforeunload', function(event){
+			if (window.localStorage) {
+				if (post.todoList.length) {
+					//  保存为 "a=age&b=baby#a=baby"
+					localStorage.setItem('post-list', post.todoList.map(function(obj){
+						return $.param(obj);
+					}).join('#'));
 				}
-			});
 
-			Vue.component("todo-item", {
-				props: ["item", "index"],
-				template: `
+			}
+		});
+
+		Vue.component("todo-item", {
+			props: ["item", "index"],
+			template: `
 					<dl>
-					<dd>{{ index + 1 }}. {{ item.title }}</dd>
-					<dt style="white-space: pre-line;"> {{ item.content }}</dt>
+					<dt>{{ index + 1 }}. {{ item.title }} <button class="btn btn-xs bg-danger" v-on:click="$emit('remove')">删除</button></dt>
+					<dd style="white-space: pre-line;" v-html="item.content"> </dd>
+
 				</dl>
 				`
-			});
-
-			var post = new Vue({
-				el: '#post',
-				data: {
-					title: "",
-					content: "",
-					todoList: []
-				},
-				methods: {
-					savePost: function(){
-						this.todoList.push({
-							title: this.title,
-							content: this.content
-						});
-						this.title = "";
-						this.content = "";
-					},
-					getList: function(){
-
-					},
-				},
-				created:function(){
-					if (window.localStorage && window.localStorage.getItem('post-list')) {
-						this.todoList = window.localStorage.getItem('post-list').split('#').map(function(val){
-							if (val) {
-								var returnObj = {};
-								val.split('&').map(function(val){
-									console.log('val', val)
-									if (val) {
-										var arrs = val.split('='), key = arrs[0], val = arrs[1];
-										returnObj[key] = val;
-									}
-								});
-								return returnObj;
-							}
-						});
-					} 
-				}
-			});
 		});
-	</script>
+
+		var post = new Vue({
+			el: '#post',
+			data: {
+				title: "",
+				content: "",
+				todoList: []
+			},
+			methods: {
+				savePost: function(){
+					this.todoList.push({
+						title: this.title,
+						content: this.content
+					});
+					this.title = "";
+					this.content = "";
+				},
+				getList: function(){
+
+				},
+			},
+			created:function(){
+				if (window.localStorage && window.localStorage.getItem('post-list')) {
+					this.todoList = window.localStorage.getItem('post-list').split('#').map(function(val){
+						if (val) {
+							var returnObj = {};
+							val.split('&').map(function(val){
+								console.log('val', val)
+								if (val) {
+									var arrs = val.split('='), key = arrs[0], val = arrs[1];
+									returnObj[key] = val;
+								}
+							});
+							return returnObj;
+						}
+					});
+				}
+			}
+		});
+	});
+</script>
 </body>
 </html>
