@@ -99,6 +99,7 @@
 				if (post.todoList.length) {
 					//  保存为 "a=age&b=baby#a=baby"
 					localStorage.setItem('post-list', post.todoList.map(function(obj){
+						console.log($.param(obj));
 						return $.param(obj);
 					}).join('#'));
 				}
@@ -140,12 +141,12 @@
 			created:function(){
 				if (window.localStorage && window.localStorage.getItem('post-list')) {
 					this.todoList = window.localStorage.getItem('post-list').split('#').map(function(val){
+						console.log(val)
 						if (val) {
 							var returnObj = {};
 							val.split('&').map(function(val){
-								console.log('val', val)
 								if (val) {
-									var arrs = val.split('='), key = arrs[0], val = arrs[1];
+									var arrs = val.split('='), key = decodeURIComponent(arrs[0]), val = decodeURIComponent(arrs[1]);
 									returnObj[key] = val;
 								}
 							});
