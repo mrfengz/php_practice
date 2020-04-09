@@ -133,6 +133,186 @@
                     return this.firstName + ' ' + val; 
                 }
             }
+- 条件渲染
+    
+    v-if / v-if v-else
+    <div v-if="awesome">Vue is 牛</div>            
+    <div v-else>Vue is 太牛了</div>
+    
+    v-else-if
+    <div v-if="type === 'A'">A</div>
+    <div v-else-if="type === 'B'">B</div>
+    <div v-else-if="type === 'C'">C</div>
+    <div v-else>Unknown</div>
+    
+    v-show,效果与v-if差不多，不过这个是控制是否显示，通过display属性作用的
+        不支持与 template 连用，也不支持 v-else
+    v-if是每次重新渲染的，它会尽可能复用已有元素，不想复用的话，可以使用key
+        <div v-if="loginType === 'username'">
+            <label>username</label>
+            <input placeholder="please enter username">
+        </div>
+        <div v-else>
+            <label>Email</label>
+            <input placeholder="please enter email">
+        </div>
+        给两个input不同的key，比如key="username" 和 key="email"， 不会复用input元素
+
+    Tips: 如果想同时控制多个元素的显隐，可以使用 <template v-if></template>
+    
+- 循环
+    
+    数组
+    
+        v-for="item in items"
+        v-for="{item, index} in items"
+    
+    对象
+        
+        v-for="{item,key,index} in items"
+        
+    为了让渲染的元素保持顺序，最好给每项一个 key
+    <template v-for="item in items" :key="item.id"></template>    
+- 事件
+
+    v-on:click="counter"
+    
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            _counter: 0
+        }
+        methods: {
+            counter: function(){
+                return this._counter++;
+            }
+        }
+    })    
+    
+    事件修饰符(可以连缀写)
+    * .stop     不向上冒泡
+    * .prevent  阻止默认行为
+    * .capture  触发事件的元素，自己首先执行的时间
+    * .self     触发事件的元素必须是自己
+    * .once 
+    * .passive 等待事件完成后，比如滚动结束后才会触发
+    
+    按键修饰符 可以使用KeyboardEvent.key作为修饰符
+    * v-on:keyup.enter="submit" 点击enter时调用vue.submit()方法
+    * v-on:keyup.page-down="onPageDown" 
+    
+    按键码 keyCode（已经被废弃了）
+    - v-on.keyup.13="submit"
+    - .enter    
+    - .tab    
+    - .delete    
+    - .esc   
+    - .space    
+    - .up    
+    - .down    
+    - .left    
+    - .right
+    Tips: 可以通过config.keyCodes全局配置，自定义按键修饰器别名
+    
+    系统修饰符(可以组合)
+    - .ctrl
+    - .alt
+    - .shift
+    - .meta    
+    v-on:click..ctrl # click+ctrl键
+    
+    .exact 精确控制时间
+    
+    鼠标修饰符
+    - .left
+    - .middle
+    - .right
+    
+- 表单输入绑定
+    
+    v-model 可以在textarea,input,select上创建双向数据绑定
+
+    **Tips**:会忽略value/checked/selected的初始值，应该使用data属性声明初始值 
+        new Vue({
+            data: {
+                a: 1
+            }
+        })
+        
+    修饰符
+    - .number
+    - .trim
+    - .lazy    
+    
+- 组件基础
+```    
+    Vue.component('button-counter', {
+        //必须为函数，不能为对象，这样每个组件返回的就是一个对象的copy，而不是引用
+        data: function(){
+            return {
+                counter: 0;
+            }
+        },
+        // props里边的值，可以在template中使用，在html代码中，通过v-bind将值赋给prop，可以传为对象
+        props: ['title'],
+        template: '<button v-on:click="counter++">你一共点击了 {{ counter }} 次</button>'
+    })    
+```    
+    **Tips**: 只能有一个根元素，可以用一个根元素把其他元素包裹起来
+    
+    监听子组件事件
+```        
+<blog-post
+          ...
+          v-on:enlarge-text="postFontSize += 0.1"
+        ></blog-post>
+        
+        <button v-on:click="$.emit('enlarge-text')">放大字体</button>
+        
+        或者在vue的methods属性中添加一个方法修改字体
+            onEnlargeText: function(enlargeAmount){
+                this.postFontSize += enlargeAmount;
+            }
+        
+        传递参数 $event接受
+            <blog-post
+              ...
+              v-on:enlarge-text="postFontSize += $event"
+            ></blog-post>
+            <button v-on:click="$.emit('enlarge-text', 0.1)">放大字体</button>
+ ```           
+   在自定义组件中使用v-model
+   ```vue
+    <input v-model="searchText">
+    等价于
+    <input
+      v-bind:value="searchText"
+      v-on:input="searchText = $event.target.value"
+    >
+    
+    自定义组件相当于这样的：
+    <custom-input
+      v-bind:value="searchText"
+      v-on:input="searchText = $event"
+    ></custom-input>
+    
+    定义一个组件
+    Vue.component('custom-input', {
+      props: ['value'],
+      template: `
+        <input
+          v-bind:value="value"
+          v-on:input="$emit('input', $event.target.value)"
+        >
+      `
+    })
+    
+    使用：
+    <custom-input v-model="searchText"></custom-input>
+        
+```         
+    通过插槽分发内容    todo
+    动态组件            todo
             
 > class与style绑定
    
