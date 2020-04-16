@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/tab.css">
+    <link rel="stylesheet" href="../js/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <script src="../js/libs/require.js"></script>
+    <script src="../js/main.js"></script>
+    <title>Tab点击</title>
+</head>
+<body>
+    <div class="header"></div>
+    <div class="container">
+        <ul class="nav-tab" id="tab">
+            <li v-on:click="tabClick($event)">PHP</li>
+            <li v-on:click="tabClick($event)">Mysql</li>
+            <li v-on:click="tabClick($event)">Vue</li>
+            <li v-on:click="tabClick($event)">Swoole</li>
+        </ul>
+        <div class="nav-content">
+            {{ content }}
+        </div>
+    </div>
+    <div class="footer"></div>
+
+    <script>
+        /*
+        * 调用方法时，传递 $event, 表示当前事件对象
+        * */
+        require(['jquery', 'vue'], function($, Vue){
+            var tab = new Vue({
+                el: '.container',
+                data: {
+                    content: 'PHP',
+                },
+                methods: {
+                    tabClick: function(e){
+                        this.content = e.target.textContent;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

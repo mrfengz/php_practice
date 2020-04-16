@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="../js/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/cart.css">
+    <script src="../js/libs/require.js" ></script>
+    <!-- defer async="true" -->
+    <script src="../js/main.js"></script>
+    <title>购物车</title>
+</head>
+<body>
+    <div class="header"></div>
+    <div class="container">
+        <h5 class="title">购物清单</h5>
+        <div id="cart-list">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all">全选</th>
+                    <th>商品名称</th>
+                    <th>数量</th>
+                    <th>单价(元)</th>
+                    <th>金额(元)</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+
+                <tbody >
+                    <tr v-for="product in carts">
+                        <td><input type="checkbox" name="ids[]" value="product.product_id"></td>
+                        <td class="product-info">
+                            <div><img v-bind:src="product.img" class="product-thumbnail" /></div>
+                            <div>{{ product.name }}</div>
+                        </td>
+                        <td><input type="text" name="quantity[product.product_id]" v-model="product.quantity"></td>
+                        <td>￥{{ product.price }}</td>
+                        <td>￥{{ product.price * product.quantity }}</td>
+                        <td data-id="product.product_id" @click="del_item($event)">删除</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="summary">
+                <h5>{{ total }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="footer"></div>
+
+    <script>
+        require(['vue', 'jquery'], function(Vue, $){
+            // 这里写个tr渲染出来在table的外边，没搞懂什么原因
+            Vue.component('cart-item', {
+                props: ['product'],
+                template: ` `,
+            });
+            var cartList = new Vue({
+                el: '.container',
+                data: {
+                    carts: [
+                        {product_id: 1, img: '../images/sky.jpg', name: '大风筝', quantity: 1, price: 160, sub_total: 160},
+                        {product_id: 2, img: '../images/sky2.jpg',name: '中型风筝', quantity: 2, price: 80, sub_total: 160},
+                        {product_id: 3, img: '../images/sky3.jpg',name: '小风筝', quantity: 3, price: 50, sub_total: 150},
+                    ],
+                    total: 0,
+                },
+                methods: {
+                    tabClick: function(e){
+                        this.content = e.target.textContent;
+                    }
+                },
+                created: function(){
+                    var that = this
+                    this.carts.forEach(function(product){
+                       that.total += product.price * product.quantity
+                    });
+                }
+            });
+
+            console.log(cartList.$data)
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+.nav-tab{width:80%; margin: 0 auto;background: #d8d8d8; display:flex;height: 40px;list-style: none;}
+.nav-tab>li {
+    flex-direction: row;
+    line-height: 40px;
+    height: 40px;
+    font-size:14px;
+    width:25%;
+    border-right: 1px solid #ffffff;
+    text-align: center;
+}
+.nav-content{width:80%;margin: 0 auto;border: 1px solid #ccc;min-height: 200px;}

@@ -336,3 +336,227 @@
 > 生命周期
 
     ![生命周期图](./images/vue_lifetime.png)      
+    
+#### 深入了解组件
+  
+    组件注册
+    - 全局注册
+   ```Vue
+       Vue.component('component-name', {
+       // ... content
+       })
+   ```
+    - 局部注册
+```Vue
+    var ComponentA = {...}
+    var ComponentB = {...}
+    
+    new Vue({
+        el: '#el',
+        components: {
+            'component-a': ComponentA,
+            'component-b': ComponentB,
+        }
+    })
+    
+    使用Babel或者WebPack
+    import ComponentA from './ComponentA.vue'
+    
+    export default {
+        components: {
+            ComponentA, //相当于ComponentA: ComponentA
+        }
+    }
+```   
+    基础组件的自动化全局注册
+```vue
+    import BaseButton from './BaseButton.vue'
+    import BaseIcon from './BaseIcon.vue'
+    import BaseInput from './BaseInput.vue'
+    
+    export default {
+      components: {
+        BaseButton,
+        BaseIcon,
+        BaseInput
+      }
+    }
+    
+    模板中使用
+    <BaseInput
+      v-model="searchText"
+      @keydown.enter="search"
+    />
+    <BaseButton @click="search">
+      <BaseIcon name="search"/>
+    </BaseButton>
+    
+    使用了webpack的情形，可以使用require.context只全局注册一些非常通用的基础组件。下边的代码为在全局中导入基础组件的示例代码。
+        import Vue from 'vue'
+        import upperFirst from 'lodash/upperFirst'
+        import camelCase from 'lodash/camelCase'
+        
+        const requireComponent = require.context(
+          // 其组件目录的相对路径
+          './components',
+          // 是否查询其子目录
+          false,
+          // 匹配基础组件文件名的正则表达式
+          /Base[A-Z]\w+\.(vue|js)$/
+        )
+        
+        requireComponent.keys().forEach(fileName => {
+          // 获取组件配置
+          const componentConfig = requireComponent(fileName)
+        
+          // 获取组件的 PascalCase 命名
+          const componentName = upperFirst(
+            camelCase(
+              // 获取和目录深度无关的文件名
+              fileName
+                .split('/')
+                .pop()
+                .replace(/\.\w+$/, '')
+            )
+          )
+        
+          // 全局注册组件
+          Vue.component(
+            componentName,
+            // 如果这个组件选项是通过 `export default` 导出的，
+            // 那么就会优先使用 `.default`，
+            // 否则回退到使用模块的根。
+            componentConfig.default || componentConfig
+          )
+        })
+        
+```      
+
+#### Prop
+    类型           
+    props: {
+        title: String,
+        likes: Number,
+        isPublished: Boolean,
+        commentIds: Array,
+        author: Object,
+        callback: Function,
+        contactsPromise: Promise,
+    }
+    
+    传入一个对象所有属性, v-bind后边不跟任何key
+    <blog-post v-bind="post"></blog-post>
+    
+    Prop验证
+        Vue.component('my-component', {
+          props: {
+            // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+            propA: Number,
+            // 多个可能的类型
+            propB: [String, Number],
+            // 必填的字符串
+            propC: {
+              type: String,
+              required: true
+            },
+            // 带有默认值的数字
+            propD: {
+              type: Number,
+              default: 100
+            },
+            // 带有默认值的对象
+            propE: {
+              type: Object,
+              // 对象或数组默认值必须从一个工厂函数获取
+              default: function () {
+                return { message: 'hello' }
+              }
+            },
+            // 自定义验证函数
+            propF: {
+              validator: function (value) {
+                // 这个值必须匹配下列字符串中的一个
+                return ['success', 'warning', 'danger'].indexOf(value) !== -1
+              }
+            }
+          }
+        })
+        
+        非Prop的Attribute
+            可以通过写到模板中
+            
+        替换/合并已有的Attribute
+            一般外部提供给组件的值会替换掉组件内部设置好的值。
+            style和css稍微智能点，会合并
+        
+        禁用Attribute继承
+            new Vue({
+                inheritAttrs: false, // 不会影响style和css的继承
+            })
+            
+```vue
+        $attrs = {
+            required: true,
+            placeholder: 'Please Enter your name',
+        }
+        
+        有了 inheritAttrs: false 和 $attrs，你就可以手动决定这些 attribute 会被赋予哪个元素
+        
+        Vue.component('base-input', {
+          inheritAttrs: false,
+          props: ['label', 'value'],
+          template: `
+            <label>
+              {{ label }}
+              <input
+                v-bind="$attrs"
+                v-bind:value="value"
+                v-on:input="$emit('input', $event.target.value)"
+              >
+            </label>
+          `
+        })
+```
+
+#### 自定义事件
+    
+    名字必须完全匹配，包括大小写
+    
+    v-model默认会利用 prop： value 和 input 的事件，但是单选框或者复选框等类型输入控件，可能会将attribute value用于不同的目的，model选项可以避免这个冲突：
+```vue
+    Vue.component('base-checkbox', {
+        model: {
+            prop: 'checked',
+            event: 'change',
+        },
+        props: {
+            checked: Boolean
+        },
+        template: `
+            <input type="checkbox" 
+                v-bind:checked="checked"
+                v-on:change="$.emit('change', $event.target.checked)">
+        `
+    })
+    
+    使用组件：
+    <base-checkbox v-model="lovingVue"></base-checkbox>
+    
+    这里的lovingVue会传入这个名为checked的prop，触发change事件时，lovingVue这个属性会被更新
+```
+
+    将原生事件绑定到组件 .native（不太理解）
+        v-on:focus.native
+        
+    .sync 修饰符（不太理解）
+        父子组件的双向绑定，不能用于复杂的表达式
+        
+ #### 插槽
+    slot slot-scope
+    新版： v-slot
+    相当于tp模板引擎中的占位符，可以引入其他内容，包括文本，html和其他组件等      
+    
+    合并不同对象的属性为一个新对象
+    Object.assign({}, someObject, {a: 1, b: 2})     
+    
+    window.location.pathname 去掉域名后的部分 
