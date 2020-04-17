@@ -1,3 +1,12 @@
 .product-thumbnail{width:100px;}
 .product-info{display:flex;
     align-items: center;}
+
+#cart-list .quantity{display:flex;}
+#cart-list .quantity>div{border: 1px solid #ccc;width: 20px;text-align:center;font-size:20px;}
+
+#cart-list .quantity input{width:80px;padding-left: 6px;}
+
+#cart-lsit .summary {border-top: 2px solid #ccc;text-align:right;}
+
+#cart-list .summary em{color:red;}
