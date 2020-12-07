@@ -35,22 +35,30 @@ class App
     {
         // pd($_SERVER);
         // pathinfo ? get
-        if($params['REQUEST_URI']) {
-            $res = parse_url($params['REQUEST_URI']);
-            parse_str($res['query'], $segments);
-            if (isset($segments[$this->routeQueryName])) {
-                $route = $segments[$this->routeQueryName];
+        if (isset($_GET['r'])) {
+            $route =  $_GET['r'];
+        } elseif($params['REQUEST_URI']) {
+            pd($params['REQUEST_URI']);
+            if ($params['REQUEST_URI'] === '/') {
+                $route = 'index/index';
+            } else {
+                $res = parse_url($params['REQUEST_URI']);
+                parse_str($res['query'], $segments);
+                if (isset($segments[$this->routeQueryName])) {
+                    $route = $segments[$this->routeQueryName];
+                }
             }
         } elseif ($params['argv']) {
             $route = $params['argv'][1];
         }
 
         if ($route) {
-            list($controller, $action) = explode( '/', $route, 2);
+            // todo 支持目录 system/admin/index
+            list($controller, $action) = self::parseRoute($route);
         }
-
-        if (is_null($controller)) $controller = $this->defaultController;
-        if (is_null($action)) $action = $this->defaultAction;
+        // pd($controller, $action);
+        if (is_null($controller)) $controller = 'test'; //$this->defaultController;
+        if (is_null($action)) $action = 'index'; //$this->defaultAction;
 
         $camelController = ucfirst(strtolower($controller));
 // pd($controller, $action);
@@ -70,7 +78,20 @@ class App
 
         $res = call_user_func([$controllerObj, $action]);
 
-        var_dump($res);
+        // var_dump($res);
         return $res;
+    }
+
+    public function parseRoute($route, $directory = '')
+    {
+        list($controller, $action) = explode( '/', $route, 2);
+        $camelController = ucfirst(strtolower($controller));
+        $controllerFile = BASE_PATH . DS . $this->moduleDirectory . DS . 'Controller' . DS .$camelController . '.php';
+        if (file_exists($controllerFile)) {
+            //todo
+            return [$controller, $action];
+        } else {
+            return 'todo';
+        }
     }
 }

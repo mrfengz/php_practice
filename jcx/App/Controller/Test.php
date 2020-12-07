@@ -8,12 +8,25 @@
 
 namespace App\Controller;
 
-class Test
+use ztf\Controller;
+use App\Model\Test as TestModel;
+
+class Test extends Controller
 {
     public function index()
     {
         p($_GET);
         echo __METHOD__;
-        return 'hello test';
+        // return 'hello test';
+        $this->assign('title', 'PHP View test');
+        $this->display('index');
+    }
+
+    public function getTables()
+    {
+        $model = new TestModel();
+        $res = $model->query('SHOW TABLES;');
+        p($res);
+
     }
 }
