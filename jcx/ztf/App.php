@@ -11,18 +11,24 @@ class App
 
     private $routeQueryName = 'r';
 
+    /**
+     * @var Log 日志
+     */
+    public $log;
+
     public function __construct(array $config = [])
     {
         foreach ($config as $attr => $val) {
             $this->$attr = $val;
         }
-        $this->bootstrap();
         self::$app = $this;
+        $this->bootstrap();
     }
 
     public function bootstrap()
     {
         echo 'app bootstrap...';
+        self::$app->log = Log::getInstance();
     }
 
     public function run()

@@ -5,9 +5,15 @@ define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', __DIR__ . DS);
 define('CORE', BASE_PATH . 'ztf' . DS);
 define('IS_CLI', php_sapi_name() === 'cli');
-defined('IS_DEBUG') OR define('DEBUG', true);
+defined('DEBUG') OR define('DEBUG', true);
 define('MODULE', 'App');
 
+if (DEBUG) {
+    ini_set('display_errors', 'On');
+    error_reporting(E_ALL ^ E_NOTICE);
+} else {
+    ini_set('display_errors', 'Off');
+}
 
 // 引入配置文件
 $config = require BASE_PATH . 'config/main.php';

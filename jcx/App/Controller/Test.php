@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use ztf\App;
 use ztf\Controller;
 use App\Model\Test as TestModel;
 
@@ -24,6 +25,8 @@ class Test extends Controller
 
     public function getTables()
     {
+        App::$app->log->write('hello world');
+
         $model = new TestModel();
         $res = $model->query('SHOW TABLES;');
         p($res);

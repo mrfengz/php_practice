@@ -17,15 +17,13 @@ class DB
 
     private function __construct(array $options = [])
     {
-        $dsn = 'mysql:host=127.0.0.1;dbname=test';
-        $username = 'root';
-        $passwd = 'root';
-
+        $dbConfig = Config::getAll('database');
         try {
-            $this->conn = new \PDO($dsn, $username, $passwd, $options);
+            $this->conn = new \PDO($dbConfig['dsn'], $dbConfig['username'], $dbConfig['passwd'], $options);
             $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec('SET CHARACTER SET ' . ($dbConfig['charset'] ?? 'utf8'));
         } catch (\PDOException $e) {
-            echo '数据库连接出错：' . $this->conn->errorInfo();
+            echo '数据库连接出错：' . var_export($this->conn->errorInfo(), true);
             throw $e;
         }
     }

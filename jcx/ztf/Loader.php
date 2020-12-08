@@ -16,6 +16,7 @@ class Loader
 	        $classFile = str_replace('\\', '/', $class) . '.php';
         }
 
+	    // p(BASE_PATH . $classFile);
 	    // 判断类文件是否存在
 	    if (!file_exists($file = BASE_PATH . $classFile)) {
 	        exit('找不到类文件：' . $file);
