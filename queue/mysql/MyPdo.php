@@ -41,6 +41,11 @@ class MyPdo
         return self::$conn->query($sql, $mode)->fetchAll();
     }
 
+    public function exec($sql)
+    {
+        return self::$conn->exec($sql);
+    }
+
     public function insert($table, $data)
     {
         if (empty($data)) throw new \InvalidArgumentException("插入数据不能为空", 1);
@@ -54,7 +59,8 @@ class MyPdo
         $sql .= '(' . join(',', array_keys($placeholders)) . ') VALUES(' . join(',', array_values($placeholders)) . ')';
         $stat = self::$conn->prepare($sql);
         foreach ($vals as $k => $v) {
-            $stat->bindParam($k, $v);
+            // bindParam() 这个地方有坑，是引用传递。 如果传递$v,第一次循环时，会把这个值改为第一个的值，后边再改的话，把这个地址传过来，放入第二个值，最终的结果是，所有的值都是最后一个元素的值。
+            $stat->bindParam($k, $vals[$k]);
         }
         $stat->execute();
         return $stat->rowCount();
