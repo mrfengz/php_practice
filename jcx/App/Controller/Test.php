@@ -29,7 +29,8 @@ class Test extends Controller
 
         $model = new TestModel();
         $res = $model->query('SHOW TABLES;');
-        p($res);
+        // p($res);
+        return $res;
 
     }
 }

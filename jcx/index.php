@@ -15,6 +15,8 @@ if (DEBUG) {
     ini_set('display_errors', 'Off');
 }
 
+
+
 // 引入配置文件
 $config = require BASE_PATH . 'config/main.php';
 
@@ -24,7 +26,10 @@ require CORE . 'funcs/functions.php';
 // print_r($config);die;
 require_once(BASE_PATH . 'autoload.php');
 
-
+// 如果存在bootstrap.php文件，先加载
+if (file_exists('bootstrap.php')) {
+    require('bootstrap.php');
+}
 
 // print_r(get_included_files()) ;
 

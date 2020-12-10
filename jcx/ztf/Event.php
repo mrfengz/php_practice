@@ -11,6 +11,8 @@ namespace ztf;
 
 class Event
 {
+    const EVENT_BEFORE_REQUEST = 1;
+    const EVENT_AFTER_REQUEST = 2;
     private static $events = [];
 
     /**
@@ -29,7 +31,7 @@ class Event
         if ($prepend) {
             array_unshift(self::$events[$eventName], $callback);
         } else {
-            array_push(self::$events[$eventName]);
+            array_push(self::$events[$eventName], $callback);
         }
     }
 
