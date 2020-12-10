@@ -16,7 +16,24 @@ echo 'manager: ' . getmypid();
 
 $cmd = "php {$dir}\consume.php";
 
-execInBackground($cmd);die;
+function execInBackground($cmd) {
+    if (substr(php_uname(), 0, 7) == "Windows"){
+        pclose(popen("start /B ". $cmd, "r"));
+    }
+    else {
+        exec($cmd . " > /dev/null &");
+    }
+}
+
+// execInBackground($cmd);die;
+
+$processNum = 3;
+for ($i = 0; $i < $processNum; $i++) {
+    echo "test".$i . PHP_EOL;
+    execInBackground($cmd);
+}
+echo "done";
+die;
 
 // echo $cmd;
 $handler = popen("start /B " . $cmd, 'r');
@@ -42,27 +59,3 @@ die;
 // 同步
 // $res = shell_exec($cmd);
 // var_dump($res);die;
-
-
-// var_dump(__DIR__) ;die;
-
-function execInBackground($cmd) {
-    if (substr(php_uname(), 0, 7) == "Windows"){
-        echo $cmd;
-        pclose(popen("start /B ". $cmd, "r"));
-    }
-    else {
-        exec($cmd . " > /dev/null &");
-    }
-}
-// file_put_contents('log.txt', 'manager: ' . getmypid().PHP_EOL, FILE_APPEND);
-
-
-execInBackground($cmd);die;
-
-
-execInBackground('php D:\phpStudy\PHPTutorial\WWW\php_practice\queue\mysql\consume.php');die;
-
-for ($i=0; $i<10;$i++) {
-    execInBackground('php D:\phpStudy\PHPTutorial\WWW\php_practice\queue\mysql\consume.php');
-}

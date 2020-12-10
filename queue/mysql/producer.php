@@ -20,9 +20,14 @@ function generateTradeId($time = null)
     echo $id;
     return $id;
 }
-// status 1：待处理, 2: 处理中 3:处理成功 4:处理失败
-$res = $db->insert('trade_message', [
-    'trade_id' => generateTradeId(),
-    'create_time' => time(),
-]);
-var_dump($res);
+for($i=0; $i<18600; $i++) {
+    // status 1：待处理, 2: 处理中 3:处理成功 4:处理失败
+    $res = $db->insert(
+        'trade_message', [
+        'trade_id' => generateTradeId(),
+        'create_time' => time(),
+        ]
+    );
+}
+
+// var_dump($res);
