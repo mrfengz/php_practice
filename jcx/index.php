@@ -1,4 +1,8 @@
 <?php
+
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
+
 define('VERSION', '0.1');
 
 define('DS', DIRECTORY_SEPARATOR);
@@ -8,13 +12,19 @@ define('IS_CLI', php_sapi_name() === 'cli');
 defined('DEBUG') OR define('DEBUG', true);
 define('MODULE', 'App');
 
+
+require BASE_PATH . 'vendor/autoload.php';
+
 if (DEBUG) {
     ini_set('display_errors', 'On');
     error_reporting(E_ALL ^ E_NOTICE);
+
+    $whoops = new Run();
+    $whoops->pushHandler(new PrettyPageHandler());
+    $whoops->register();
 } else {
     ini_set('display_errors', 'Off');
 }
-
 
 
 // 引入配置文件
