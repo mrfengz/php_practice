@@ -1,40 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: august
- * Date: 2020/12/7
- * Time: 19:57
- */
-
 namespace ztf;
 
+use Medoo\Medoo;
 
-class Model
+class Model extends Medoo
 {
-    /**
-     * @var DB|null
-     */
-    static $db;
-
-    /**
-     * @var 表名
-     */
-    public $table;
-
+    protected $conn;
 
 
     public function __construct()
     {
-        self::$db = self::getDb();
-    }
-
-    public static function getDb()
-    {
-        return DB::getInstance();
-    }
-
-    public function query($sql)
-    {
-        return self::$db->query($sql);
+        $conf = Config::getAll('database');
+        parent::__construct($conf);
     }
 }

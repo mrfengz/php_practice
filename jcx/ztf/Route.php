@@ -26,6 +26,9 @@ class Route
             $route = $_GET[$this->routeParamName];
         } elseif (strstr($_SERVER['REQUEST_URI'], 'index.php')) {
             $route = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], 'index.php')+10);
+            if (empty($route)) {
+                $route = $this->controller . '/' . $this->action;
+            }
         } elseif ($_SERVER['REQUEST_URI']) {
             if ($_SERVER['REQEUST_URI'] === '/') {
                 $route = $this->controller . '/' . $this->action;

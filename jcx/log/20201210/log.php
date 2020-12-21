@@ -1,6 +1,0 @@
-2020-12-10 09:27:19 "hello world"
-2020-12-10 09:33:23 "hello world"
-2020-12-10 09:33:38 "hello world"
-2020-12-10 09:34:01 "hello world"
-2020-12-10 09:35:04 "hello world"
-2020-12-10 09:41:43 "hello world"
