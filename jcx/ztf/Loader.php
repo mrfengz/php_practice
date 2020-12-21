@@ -23,7 +23,7 @@ class Loader
         }
 
 	    require $file;
-	    if (!class_exists($class)) {
+	    if (!class_exists($class) && !interface_exists($class)) {
 	        throw new \Exception("无法找到类{$class}, 在类文件{$file}中", 1);
         }
 	    self::$loadedClasses[$class] = $file;

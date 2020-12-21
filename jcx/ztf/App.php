@@ -37,8 +37,13 @@ class App
      */
     protected function bootstrap()
     {
+        // 注册错误、异常和关闭处理函数
+        register_shutdown_function([ExceptionHandler::class, 'onShutdown']);
+        set_error_handler([ExceptionHandler::class, 'onError']);
+        set_exception_handler([ExceptionHandler::class, 'onException']);
+
         self::$app->route = new Route();
-        echo 'app bootstrap...';
+        // echo 'app bootstrap...';
         self::$app->log = Log::getInstance();
     }
 
@@ -57,4 +62,29 @@ class App
         // 请求后事件触发    
         Event::trigger(Event::EVENT_AFTER_REQUEST, $res);
     }
+
+    public static function get($name)
+    {
+        return self::$app->$name ?? null;
+    }
+
+    /**
+     * 写日志
+     *
+     * @param mixed $data
+     * @return void
+     */
+    public static function writeLog($data, $config = [])
+    {
+        $canWrite = true;
+        if ($config && empty($config['write_log'])) {
+            $canWrite = false;
+        }
+        /** @var Log */
+        $log = App::get('log');
+        if ($log && $canWrite) {
+            $log->write($data);
+        }
+    }
+
 }
