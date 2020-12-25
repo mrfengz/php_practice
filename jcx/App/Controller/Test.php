@@ -11,15 +11,17 @@ namespace App\Controller;
 use ztf\App;
 use ztf\Controller;
 use App\Model\TestModel;
+use ztf\Lang;
 
 class Test extends Controller
 {
     public function index()
     {
-        exit('test');
+        echo Lang::e('order list');die;
+        // exit('test');
         // trigger_error('方法不存在', E_USER_ERROR);
         // die;
-        throw new \Exception('test', 111);
+        // throw new \Exception('test', 111);
         // return 'hello test';
         $this->assign('title', 'PHP View test');
         // echo $this->display('twig_index');

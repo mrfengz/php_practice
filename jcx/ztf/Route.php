@@ -51,14 +51,14 @@ class Route
     {
         $camelController = ucfirst(strtolower($this->controller));
         // /path/to/App/Controller/Index.php
-        $controllerFile = BASE_PATH . MODULE . DS . 'Controller' . DS .$camelController . '.php';
-        // var_dump(is_file($controllerFile));die;
+        $controllerFile = APP_PATH . DS . 'Controller' . DS .$camelController . '.php';
+        // var_dump($controllerFile, is_file($controllerFile));die;
         if (!$controllerFile) {
             throw new \Exception("找不到对应的控制器文件" . $camelController . '.php');
         }
 
         //  App\Controller\Index
-        $c = MODULE . '\Controller\\' . $camelController;
+        $c = basename(APP_PATH) . '\Controller\\' . $camelController;
         $controllerObj = new $c;
         // p($controllerObj);
         if (!is_callable([$controllerObj, $this->action], true)) {

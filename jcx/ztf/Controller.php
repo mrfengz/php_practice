@@ -24,7 +24,7 @@ class Controller
     public function displayV1($file)
     {
         $directory = substr(static::class, strpos(static::class, 'Controller') + 11);
-        $filePath = BASE_PATH . MODULE . DS . 'View/' . strtolower($directory) . DS . $file . '.html';
+        $filePath = APP_PATH . DS . 'View/' . strtolower($directory) . DS . $file . '.html';
         if (!is_file($filePath)) {
             throw new NotFoundException("找不到视图文件" . $file);
         }
@@ -44,7 +44,7 @@ class Controller
     {
         $directory = substr(static::class, strpos(static::class, 'Controller') + 11);
         // $viewPath = BASE_PATH . MODULE . DS . 'View' . DS . strtolower($directory);
-        $viewPath = BASE_PATH . MODULE . DS . 'View';
+        $viewPath = APP_PATH . DS . 'View';
 
         $file = $file . '.html';
 

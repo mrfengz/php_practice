@@ -1,51 +1,19 @@
 <?php
 
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Run;
-
 define('VERSION', '0.1');
 
-define('DS', DIRECTORY_SEPARATOR);
-define('BASE_PATH', __DIR__ . DS);
-define('CORE', BASE_PATH . 'ztf' . DS);
-define('IS_CLI', php_sapi_name() === 'cli');
+
+define('APP_PATH', __DIR__. DIRECTORY_SEPARATOR . 'App');
+
 defined('DEBUG') OR define('DEBUG', true);
-define('MODULE', 'App');
 
 
-require BASE_PATH . 'vendor/autoload.php';
-
-if (DEBUG) {
-    ini_set('display_errors', 'On');
-    error_reporting(E_ALL ^ E_NOTICE);
-
-    $whoops = new Run();
-    $whoops->pushHandler(new PrettyPageHandler());
-    $whoops->register();
-} else {
-    ini_set('display_errors', 'Off');
-}
-
-
-// 引入配置文件
-$config = require BASE_PATH . 'config/main.php';
-
-// 引入常用文件函数
-require CORE . 'funcs/functions.php';
-
-// print_r($config);die;
-require_once(BASE_PATH . 'autoload.php');
-
-// 如果存在bootstrap.php文件，先加载
-if (file_exists('bootstrap.php')) {
-    require('bootstrap.php');
-}
 
 // print_r(get_included_files()) ;
 
 // (new \ztf\App($config));
 
-(new \ztf\App($config))->run();
+include APP_PATH . '/../ztf/start.php';
 
 //
 // function test($args) {
