@@ -25,12 +25,15 @@ class Route
         if (isset($_GET[$this->routeParamName])) {
             $route = $_GET[$this->routeParamName];
         } elseif (strstr($_SERVER['REQUEST_URI'], 'index.php')) {
+            // dump($_SERVER);
             $route = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], 'index.php')+10);
+            $route = explode('?', $route)[0];
             if (empty($route)) {
                 $route = $this->controller . '/' . $this->action;
             }
         } elseif ($_SERVER['REQUEST_URI']) {
-            if ($_SERVER['REQEUST_URI'] === '/') {
+            // todo
+            if ($_SERVER['REQUEST_URI'] === '/') {
                 $route = $this->controller . '/' . $this->action;
             } else {
                 $route = $$_SERVER['REQUEST_URI'];
@@ -64,10 +67,10 @@ class Route
         if (!is_callable([$controllerObj, $this->action], true)) {
             throw new \Exception($controllerFile . '中不存在方法' . $this->action);
         }
-
+echo $this->action;
         $res = call_user_func([$controllerObj, $this->action]);
 
-        // var_dump($res);
+        var_dump($res);
         return $res;
     }
 }

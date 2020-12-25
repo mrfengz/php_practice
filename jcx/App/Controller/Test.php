@@ -17,11 +17,14 @@ class Test extends Controller
 {
     public function index()
     {
-        echo Lang::e('order list');die;
-        // exit('test');
+        // var_dump( Lang::e('order list'));die;
+
         // trigger_error('方法不存在', E_USER_ERROR);
+
         // die;
+
         // throw new \Exception('test', 111);
+        
         // return 'hello test';
         $this->assign('title', 'PHP View test');
         // echo $this->display('twig_index');
