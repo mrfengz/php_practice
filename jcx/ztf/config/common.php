@@ -24,4 +24,13 @@ return [
         'class' => ExceptionHandler::class,
         'write_log' => true,
     ],
+
+    //cookie
+    'cookie' => [
+        'cookie_domain' => '',
+        'cookie_path' => '/',
+        'cookie_httponly' => true,
+        'cookie_secure' => false,
+        'cookie_expire_days' => 2,
+    ]
 ];

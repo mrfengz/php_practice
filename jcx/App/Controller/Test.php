@@ -11,6 +11,7 @@ namespace App\Controller;
 use ztf\App;
 use ztf\Controller;
 use App\Model\TestModel;
+use ztf\Cookie;
 use ztf\Lang;
 
 class Test extends Controller
@@ -29,6 +30,23 @@ class Test extends Controller
         $this->assign('title', 'PHP View test');
         // echo $this->display('twig_index');
         echo $this->display('test/index');
+    }
+
+    public function setCookie()
+    {
+       $data = [
+           'username' => 'august',
+           'password' => 'admh34',
+       ];
+       Cookie::set($data);
+    //    Cookie::set('find', 'you', 300);
+    }
+
+    public function getCookie()
+    {
+        dump($_COOKIE);die;
+        dump(Cookie::get('user'));
+        dump(Cookie::get('passwd'));
     }
 
     public function index2()

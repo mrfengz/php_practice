@@ -19,10 +19,11 @@ class Config
      * author: august 2020/12/8
      * @param $name 配置名称, 支持.语法 db.username 代表文件中 'db' => ['username' => 'xxx']
      * @param $file 配置文件名称
+     * @param $default 配置不存在时的默认值
      * @return array|mixed|null
      * @throws NotFoundException
      */
-    public static function get($name, $file)
+    public static function get($name, $file, $default = null)
     {
         $config = self::getAll($file);
         if (strpos($name, '.') !== false) {
@@ -31,7 +32,7 @@ class Config
             }
             return $config;
         }
-        return $config[$name] ?? null;
+        return $config[$name] ?? $default;
     }
 
     public static function getAll($file = null)

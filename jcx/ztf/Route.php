@@ -67,10 +67,9 @@ class Route
         if (!is_callable([$controllerObj, $this->action], true)) {
             throw new \Exception($controllerFile . '中不存在方法' . $this->action);
         }
-echo $this->action;
+
         $res = call_user_func([$controllerObj, $this->action]);
 
-        var_dump($res);
         return $res;
     }
 }
