@@ -87,6 +87,7 @@ class App
         self::$app->route = new Route();
         // echo 'app bootstrap...';
         self::$app->log = Log::getInstance();
+        Session::getInstance();
     }
 
     /**

@@ -32,5 +32,10 @@ return [
         'cookie_httponly' => true,
         'cookie_secure' => false,
         'cookie_expire_days' => 2,
+    ],
+    //session
+    'session' => [
+        'enable_session' => true,
+        'save_path' => 'D:\tmp',
     ]
 ];

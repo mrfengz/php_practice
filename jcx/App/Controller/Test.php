@@ -13,6 +13,7 @@ use ztf\Controller;
 use App\Model\TestModel;
 use ztf\Cookie;
 use ztf\Lang;
+use ztf\Session;
 
 class Test extends Controller
 {
@@ -47,6 +48,26 @@ class Test extends Controller
         dump($_COOKIE);die;
         dump(Cookie::get('user'));
         dump(Cookie::get('passwd'));
+    }
+
+
+    public function testSet()
+    {
+        // if (empty($_SESSION['login'])) {
+        if (empty(Session::get('login3'))) {
+            // $_SESSION['login'] = true;
+            Session::set('login3', 'zhangsna3');
+            echo '登录成功';
+        } else {
+            echo '跳转成功！';die;
+        }
+    }
+
+    public function testGet()
+    {
+        // session_start();
+        // var_dump($_SESSION['login']);
+        var_dump(Session::get('login2'));
     }
 
     public function index2()
