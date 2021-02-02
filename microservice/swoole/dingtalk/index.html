@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>socket实时更新价格</title>
+</head>
+<body>
+<button id="socket-switch" data-switch="off">socket</button>
+<div>xxxxx</div>
+</body>
+<script src="https://lib.baomitu.com/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(function(){
+        var ws;
+        if(ws == null){
+            var wsServer = 'ws://'+ location.hostname +':8888';
+            console.log(wsServer)
+
+            ws = new WebSocket(wsServer);
+            ws.onopen = function(){
+                console.log("socket连接已打开");
+            };
+            ws.onmessage = function(e){
+                console.log("message:" + e.data);
+                $('body').prepend('<p>'+e.data+'</p>');
+            };
+            ws.onclose = function(){
+                console.log("socket连接已断开");
+            };
+            ws.onerror = function(e){
+                console.log("ERROR:" + e.data);
+            };
+            //离开页面时关闭连接
+            $(window).bind('beforeunload',function(){
+                ws.close();
+            });
+        }
+
+        $('#socket-switch').on('click',function(){
+            let flag = $(this).data('switch');
+            $(this).data('switch', flag == 'on' ? 'off' : 'on');
+            if (flag === 'on') {
+                ws.close()
+            } else {
+                ws.send('hello test');
+            }
+        });
+    });
+</script>
+</html>
