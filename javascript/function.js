@@ -125,29 +125,20 @@ function forEach(array, callback) {
 	}
 }
 
-// 对for in 进行封装。
-// 数组和对象都可以，为enumerable对象, callback(key, value)
-function forEachIn(args, callback){
-	for(var i in args) {
-		callback(i, args[i]);
-	}
+// 检测对象自身是否含有某个属性，不包括继承的
+function forEachIn(object, action) {
+    for (var property in object) {
+        // Object.prototype.hasOwnProperty.call(object, property) , 如果对象有一个hasOwnProperty属性的话
+        if (Object.hasOwnProperty(property)) {
+            action(property, Object[property]);
+        }
+    }
 }
 
-// 原生js创建元素
-function dom(name, attributes/*, children ...*/) {
-	var node = document.createElement(name);
-	if (attributes) {
-		forEachIn(attributes, function(name, value){
-			node.setAttribute(name, value);
-		});
-	}
-
-	for(var i=2; i<arguments.length; i++) {
-		var child = arguments[i];
-		if (typeof child == 'string') {
-			child = document.createTextNode(child);
-		}
-		node.appendChild(child);
-	}
-	return node;
+function print() {
+	var result = [];
+	forEach(arguments, function(arg){
+		result.push(String(arg));
+	});
+	console.log(result.join(""))
 }

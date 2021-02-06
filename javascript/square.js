@@ -585,9 +585,9 @@ giantSloth.inspect();
 
 // 混入，实现类似多重继承的功能
 function mixInto(object, mixIn) {
-    forEachIn(minIn, function(name, value)) {
+    forEachIn(minIn, function(name, value) {
         object[name] = value;
-    }
+    })
 }
 
 var SmallDetaildItem = clone(DetaildItem);
