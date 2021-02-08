@@ -9,7 +9,11 @@
 namespace App\Models;
 
 
-class PushSettingModel
+class PushSettingModel extends BaseModel
 {
+    protected $table = 'push_setting';
+
+    protected $allowedFields = ['token', 'secret', 'name', 'at_mobiles', 'status', 'user_id', 'create_time', 'update_time'];
+
 
 }

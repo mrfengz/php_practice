@@ -6,3 +6,9 @@ function layerOpen(html) {
         content: html
     });
 }
+
+function layerAlert(content, error) {
+    layer.alert(content, {
+        icon: error ? 2 : 1,    // 1提示，2错误
+    });
+}

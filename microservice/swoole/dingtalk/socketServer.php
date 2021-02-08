@@ -9,26 +9,7 @@
 define('LIB', __DIR__ . '/lib/');
 include_once(LIB . 'Curl.php');
 include_once(LIB . 'Robot.php');
-include_once('WebController.php');
-
-// print_r((new Robot(['access_token' => 'c24ce2403084ff7c70fe13e1f70522adf760abd196b84824b39565c7c51ac1e2']))->sendText("hello, you"));
-// die;
-//获取股票数据
-// $stockCodeList = ['sz000423' => '东阿阿胶', 'sz002294' => '信立泰', 'sz002430' => '杭氧股份', 'sh600882' => '妙可蓝多', 'sh601088' => '中国神华', 'sz002726' => '龙大肉食', 'sz002919' => '名臣健康', 'sh600970' => '中材国际']; //sh601003,sh601001
-// $url = 'http://hq.sinajs.cn/list=' . join(',', array_keys($stockCodeList));
-// $res = Curl::httpRequest($url);
-// var_dump($res);die;
-// $res = formatResult($res);
-// var_dump($res);die;
-// $_data = [];
-// foreach ($stockCodeList as $code => $name) {
-//     $_data[] = $name . " current price is: " . ($res[$code] ? $res[$code][3] : 'null');
-// }
-
-
-
-// $response = 'var hq_str_sh601003=",5.560,5.560,5.540,5.680,5.480,5.540,5.550,5879916,32733728.000,21500,5.540,12300,5.530,25900,5.520,5800,5.510,30200,5.500,2300,5.550,12720,5.560,18100,5.570,16200,5.580,11000,5.590,2021-02-01,11:30:00,00,";
-// var hq_str_sh601001="úҵ,4.700,4.690,4.700,4.760,4.640,4.690,4.700,7373400,34699643.000,34600,4.690,94800,4.680,79000,4.670,99700,4.660,99100,4.650,52500,4.700,102000,4.710,19234,4.720,107700,4.730,145000,4.740,2021-02-01,11:30:00,00,"';
+include_once(LIB . 'Db.php');
 
 function formatResult(string $val) {
     $parts = [];
@@ -85,12 +66,12 @@ function formatResult(string $val) {
 }
 
 //创建WebSocket Server对象，监听0.0.0.0:9502端口
-$ws = new Swoole\WebSocket\Server('0.0.0.0', 8888);
+$ws = new Swoole\WebSocket\Server('0.0.0.0', 8890);
 
 $ws->mydata = [];
 
 // 监听80端口
-$ws->addlistener('127.0.0.1', 8080, SWOOLE_SOCK_TCP);
+// $ws->addlistener('127.0.0.1', 8080, SWOOLE_SOCK_TCP);
 
 $ws->set([
     'max_request' => 2,
@@ -102,42 +83,128 @@ $ws->on('connect', function($ws, $fd){
     echo "Client:Connect.\n";
 });
 
-// 用户登录，然后返回用户登录的session或者token，后续请求根据token判断用户，查询数据库，获取设置，进行通知
-$ws->on('request', function(\Swoole\Http\Request $request, \Swoole\Http\Response $response){
-    $pathInfo = $request->server['path_info'];
-    //如果请求 favicon.ico，直接返回
-    if ($pathInfo == '/favicon.ico' || $pathInfo == '/favicon.ico') {
-        $response->end();
-        return;
-    }
-    // if ($pathInfo)
-    // print_r($request);
-    // $requestManager = new WebController($request);
-    // $res = $requestManager->execute();
-    // $response->end(json_encode($res));
-});
-
 //监听WebSocket连接打开事件
 $ws->on('open', function ($ws, $request) {
     // var_dump($request->fd, $request->server);
-    $ws->push($request->fd, "hello, welcome2\n");
+    $ws->push($request->fd, "hello, welcome\n");
 });
 
-// \Swoole\Runtime::enableCoroutine(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-// go(function()use($ws){
-//     \Swoole\Coroutine::sleep(1);
-//     echo time() . "\n";
-// });
+// 计算波动百分比
+function calculatePercent($currentPrice, $cost) {
+    $diff = $currentPrice - $cost;
+    if (empty($cost)) {
+        return 0;
+    }
+    return 100 * ($diff / $cost);
+}
+
 
 $ws->on('workerStart', function($ws, $workerId){
     if ($workerId == 0) {
         $ws->tick(5000, function()use($ws){
             foreach ($ws->connections as $fd) {
+                if (!isset($ws->myData[$fd])) {
+                    continue;
+                }
+
+                $db = Db::getInstance();
+                $userToken = $ws->myData[$fd];
+
+                echo $userToken . "\n";
+
                 $connectionInfo = $ws->getClientInfo($fd);
                 // http请求的fd,不是实时剔除的，所以这里可能会出现http的连接，无法使用push(),会报错，不是websocket client
                 if (!$connectionInfo['websocket_status']) {
                     continue;   //非socket请求，跳过
                 }
+
+                $user = $db->fetchOne("SELECT * FROM `user` WHERE token=". $db->quote($userToken));
+                if (!$user) {
+                    continue;
+                }
+
+                $stockCodes = $db->fetchAll("SELECT * FROM `stock` WHERE user_id={$user['id']} AND status = 1");
+                $codes = [];
+                foreach ($stockCodes as $row) {
+                    $_code = $row['stock_type'] . $row['stock_code'];
+                    if ($row['stock_type'] && $row['stock_code']) {
+                        $codes[] = $_code;
+                    }
+                    $stockCodes[$_code] = $row;
+                }
+
+                echo join(',', $codes) . "\n";
+
+                $url = 'http://hq.sinajs.cn/list=' . join(',', $codes);
+                $res = Curl::httpRequest($url);
+                $res = formatResult($res);
+
+                print_r($res);
+
+
+                if (!$res) continue;
+                $_data = [];
+                foreach ($codes as $code) {
+                    if (!$res[$code]) continue;
+                    $name = $res[0] ?: $code;
+                    $_data[] = $name . ": " . ($res[$code] ? $res[$code][3] : 'null');
+                }
+                // socket 实时展示 5秒间隔
+                $data = json_encode(['time' => date('H:i:s'), 'price' => $_data], JSON_UNESCAPED_UNICODE);
+                $ws->push($fd, $data);
+
+                // continue;
+                // 波动条件预警
+                $warningData = [];
+                foreach ($stockCodes as $_code => $config) {
+                    $info = $res[$_code] ?? [];
+                    if (!$info) continue;
+
+                    if ($config['is_warning'] == 1) {   //预警
+                        if (!empty($config['day_warning_min']) || !empty($config['day_warning_max'])) {
+                            $todayChangeRatio = calculatePercent($info[3], $info[1]);
+                            if ($config['day_warning_min'] && $todayChangeRatio < $config['day_warning_min']) {
+                                $warningData[] = '止损提醒(当天波动)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                            }
+
+                            if ($config['day_warning_max'] && $todayChangeRatio > $config['day_warning_max']) {
+                                $warningData[] = '止盈提醒(当天波动)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                            }
+                        }
+                        // 基于成本价预测
+                        if (empty($config['cost'])) {
+                            continue;
+                        } elseif (!empty($config['cost_warning_min']) || !empty($config['cost_warning_max'])) {
+                            $costChangeRatio = calculatePercent($info[3], $config['cost']);
+                            if ($config['cost_warning_min'] && $costChangeRatio < $config['cost_warning_min']) {
+                                $warningData[] = '止损提醒(基于成本价)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                            }
+
+                            if ($config['cost_warning_max'] && $costChangeRatio > $config['cost_warning_max']) {
+                                $warningData[] = '止盈提醒(基于成本价)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                            }
+                        }
+                    }
+                }
+
+
+                if ($warningData) {
+                    foreach ($db->fetchAll("SELECT * FROM `push_setting` WHERE user_id={$user['id']} AND status=1") as $row) {
+                        try {
+                            $robot = new Robot([
+                                'access_token' => $row['token'],
+                                'secret' => $row['secret'] ?: '',
+                            ]);
+                            $atMobiles = $row['at_mobiles'] ? explode(',', $row['at_mobiles']) : [];
+                            $res = $robot->sendText(join("\n", $warningData), $atMobiles);
+                            print_r($res);
+                        } catch(\Exception $e) {
+                            echo $e->getMessage();
+                        }
+                    }
+                }
+
+
                 $stockCodeList = [
                     'sz002294' => '信立泰',
                     // 'sz002430' => '杭氧股份',
@@ -158,17 +225,7 @@ $ws->on('workerStart', function($ws, $workerId){
                     'sh600305' => '恒顺醋业',
                     // 'sz000423' => '东阿阿胶',
                     /*, 'sh600970' => '中材国际'*/]; //sh601003,sh601001
-                $url = 'http://hq.sinajs.cn/list=' . join(',', array_keys($stockCodeList));
-                $res = Curl::httpRequest($url);
-                $res = formatResult($res);
-                if (!$res) continue;
-                $_data = [];
-                foreach ($stockCodeList as $code => $name) {
-                    $_data[] = $name . ": " . ($res[$code] ? $res[$code][3] : 'null');
-                }
-                $data = json_encode(['time' => microtime(true), 'price' => $_data], JSON_UNESCAPED_UNICODE);
-                // todo 根据登录用户，查询对应的配置通知条件，然后获取对应的数据，通知对应的用户
-                $ws->push($fd, $data);
+
             }
 
         });

@@ -6,6 +6,8 @@
  * Time: 16:20
  */
 
+include_once 'Curl.php';
+
 class Robot
 {
     CONST API_URL = 'https://oapi.dingtalk.com/robot/send?access_token=';

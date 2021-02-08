@@ -1,0 +1,8 @@
+.danger{color:red;}
+
+.layui-icon.medium{border:1px solid #ccc;padding: 4px;}
+
+.display-flex{
+    display:flex;
+    justify-items: center;
+}

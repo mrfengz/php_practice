@@ -29,6 +29,8 @@ class Curl
         $result = curl_exec($curl);
         // 关闭curl，释放资源
         curl_close($curl);
+        // 将结果中的中文进行解析
+        $result = mb_convert_encoding($result, "utf-8", "gbk");
         return $result;
     }
 }

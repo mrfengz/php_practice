@@ -9,6 +9,7 @@
 define('LIB', __DIR__ . '/lib/');
 include_once(LIB . 'Curl.php');
 include_once(LIB . 'Robot.php');
+include_once('WebController.php');
 
 // print_r((new Robot(['access_token' => 'c24ce2403084ff7c70fe13e1f70522adf760abd196b84824b39565c7c51ac1e2']))->sendText("hello, you"));
 // die;
@@ -16,12 +17,14 @@ include_once(LIB . 'Robot.php');
 // $stockCodeList = ['sz000423' => '东阿阿胶', 'sz002294' => '信立泰', 'sz002430' => '杭氧股份', 'sh600882' => '妙可蓝多', 'sh601088' => '中国神华', 'sz002726' => '龙大肉食', 'sz002919' => '名臣健康', 'sh600970' => '中材国际']; //sh601003,sh601001
 // $url = 'http://hq.sinajs.cn/list=' . join(',', array_keys($stockCodeList));
 // $res = Curl::httpRequest($url);
+// var_dump($res);die;
 // $res = formatResult($res);
-// print_r($res);die;
+// var_dump($res);die;
 // $_data = [];
 // foreach ($stockCodeList as $code => $name) {
 //     $_data[] = $name . " current price is: " . ($res[$code] ? $res[$code][3] : 'null');
 // }
+
 
 
 // $response = 'var hq_str_sh601003=",5.560,5.560,5.540,5.680,5.480,5.540,5.550,5879916,32733728.000,21500,5.540,12300,5.530,25900,5.520,5800,5.510,30200,5.500,2300,5.550,12720,5.560,18100,5.570,16200,5.580,11000,5.590,2021-02-01,11:30:00,00,";
@@ -84,6 +87,8 @@ function formatResult(string $val) {
 //创建WebSocket Server对象，监听0.0.0.0:9502端口
 $ws = new Swoole\WebSocket\Server('0.0.0.0', 8888);
 
+$ws->mydata = [];
+
 // 监听80端口
 $ws->addlistener('127.0.0.1', 8080, SWOOLE_SOCK_TCP);
 
@@ -105,9 +110,11 @@ $ws->on('request', function(\Swoole\Http\Request $request, \Swoole\Http\Response
         $response->end();
         return;
     }
-    if ($pathInfo)
-    print_r($request);
-    $response->end("login success");
+    // if ($pathInfo)
+    // print_r($request);
+    // $requestManager = new WebController($request);
+    // $res = $requestManager->execute();
+    // $response->end(json_encode($res));
 });
 
 //监听WebSocket连接打开事件
@@ -117,29 +124,53 @@ $ws->on('open', function ($ws, $request) {
 });
 
 // \Swoole\Runtime::enableCoroutine(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
+// go(function()use($ws){
+//     \Swoole\Coroutine::sleep(1);
+//     echo time() . "\n";
+// });
+
 $ws->on('workerStart', function($ws, $workerId){
     if ($workerId == 0) {
         $ws->tick(5000, function()use($ws){
-            // go(function()use($ws){
-            //     \Swoole\Coroutine::sleep(1);
-            //     echo time() . "\n";
-            // });
             foreach ($ws->connections as $fd) {
                 $connectionInfo = $ws->getClientInfo($fd);
                 // http请求的fd,不是实时剔除的，所以这里可能会出现http的连接，无法使用push(),会报错，不是websocket client
                 if (!$connectionInfo['websocket_status']) {
                     continue;   //非socket请求，跳过
                 }
-                $stockCodeList = [/*'sz000423' => '东阿阿胶',*/ 'sz002294' => '信立泰', 'sz002430' => '杭氧股份', 'sh600882' => '妙可蓝多', 'sh601088' => '中国神华', 'sz002726' => '龙大肉食', 'sz002919' => '名臣健康'/*, 'sh600970' => '中材国际'*/]; //sh601003,sh601001
+                $stockCodeList = [
+                    'sz002294' => '信立泰',
+                    // 'sz002430' => '杭氧股份',
+                    'sh600882' => '妙可蓝多',
+                    'sz002919' => '名臣健康',
+                    'sz002493' => '荣盛石化',
+                    // 'sh601088' => '中国神华',
+                    'sz002726' => '龙大肉食',
+                    // 'sz000338' => '潍柴动力',
+                    'sh600009' => '上海机场',
+                    // 'sh603103' => '横店影视',
+                    // 'sz002402' => '和而泰',
+                    // 'sz000426' => '兴业矿业',
+                    // 'sz000987' => '越秀金控',
+                    // 'sh600875' => '东方电气',
+                    // 'sz002867' => '周大生',
+                    'sz002695' => '煌上煌',
+                    // 'sh600305' => '恒顺醋业',
+                    'sh603298' => '杭叉集团',
+                    'sh600379' => '宝光股份',
+                    'sh600674' => '川投能源',
+                    'sz000725' => '京东方A',
+                    // 'sz000423' => '东阿阿胶',
+                    /*, 'sh600970' => '中材国际'*/]; //sh601003,sh601001
                 $url = 'http://hq.sinajs.cn/list=' . join(',', array_keys($stockCodeList));
                 $res = Curl::httpRequest($url);
                 $res = formatResult($res);
                 if (!$res) continue;
                 $_data = [];
                 foreach ($stockCodeList as $code => $name) {
-                    $_data[] = $name . " current price is: " . ($res[$code] ? $res[$code][3] : 'null');
+                    $_data[] = $name . ": " . ($res[$code] ? $res[$code][3] : 'null');
                 }
-                $data = json_encode(['time' => microtime(true), 'price' => $_data], JSON_UNESCAPED_UNICODE);
+                $data = json_encode(['time' => date('H:i:s'), 'price' => $_data], JSON_UNESCAPED_UNICODE);
                 // todo 根据登录用户，查询对应的配置通知条件，然后获取对应的数据，通知对应的用户
                 $ws->push($fd, $data);
             }
@@ -150,8 +181,13 @@ $ws->on('workerStart', function($ws, $workerId){
 
 //监听WebSocket消息事件
 $ws->on('message', function ($ws, $frame) {
+    if (substr($frame->data, 0, 6) === 'token=') {
+        $token = substr($frame->data, 6);
+        $ws->mydata[$frame->fd] = $token;
+    }
+    print_r($ws->mydata);
     echo "Message: {$frame->data}\n";
-    print_r($ws);
+    // print_r($ws);
 //     Swoole\WebSocket\Server Object
 //     (
 //         [onStart:Swoole\Server:private] =>
@@ -250,7 +286,7 @@ $ws->on('message', function ($ws, $frame) {
     //     [stats_timer] =>
     // )
 
-    print_r($frame);
+    // print_r($frame);
 //     Swoole\WebSocket\Frame Object
 //     (
 //         [fd] => 3
@@ -271,6 +307,7 @@ $ws->on('message', function ($ws, $frame) {
 
 //监听WebSocket连接关闭事件
 $ws->on('close', function ($ws, $fd) {
+    unset($ws->myData[$fd]);
     echo "client-{$fd} is closed\n";
 });
 

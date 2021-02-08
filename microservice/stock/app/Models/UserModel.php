@@ -9,7 +9,10 @@
 namespace App\Models;
 
 
-class UserModel
-{
 
+class UserModel extends BaseModel
+{
+    protected $table = 'user';
+
+    protected $allowedFields = ['username', 'password', 'create', 'status', 'token'];
 }

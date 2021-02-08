@@ -9,7 +9,10 @@
 namespace App\Controllers;
 
 
-class Notify
+class Notify extends BaseController
 {
-
+    public function index()
+    {
+        $this->view('notify/list', ['token' => $_SESSION['user_token']]);
+    }
 }

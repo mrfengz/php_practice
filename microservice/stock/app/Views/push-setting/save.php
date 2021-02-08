@@ -6,18 +6,21 @@
 
 <form class="layui-form" action="">
     <div class="layui-form-item">
-        <label class="layui-form-label">股票类型</label>
+        <label class="layui-form-label">群名称</label>
         <div class="layui-input-block">
-            <select name="stock_type" lay-verify="required" value="<?= $data['stock_type'] ?? '';?>">
-                <option value="sh">上证</option>
-                <option value="sz">深证</option>
-            </select>
+            <input type="text" name="name" required  lay-verify="required" placeholder="群名称" autocomplete="off" class="layui-input" value="<?= $data['name'] ?? '';?>">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">股票代码</label>
+        <label class="layui-form-label">钉钉通知Token</label>
         <div class="layui-input-block">
-            <input type="text" name="stock_code" required  lay-verify="required" placeholder="股票代码" autocomplete="off" class="layui-input" value="<?= $data['stock_code'] ?? '';?>">
+            <input type="text" name="token" required  lay-verify="required" placeholder="钉钉通知Token" autocomplete="off" class="layui-input" value="<?= $data['token'] ?? '';?>">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">钉钉通知Secret</label>
+        <div class="layui-input-block">
+            <input type="text" name="secret" required  placeholder="钉钉通知Secret,未设置可不填写" autocomplete="off" class="layui-input" value="<?= $data['secret'] ?? '';?>">
         </div>
     </div>
 
@@ -30,40 +33,18 @@
 <!--        </div>-->
 <!--    </div>-->
     <div class="layui-form-item">
-        <label class="layui-form-label">是否预警</label>
+        <label class="layui-form-label">启用</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="is_warning" lay-skin="switch" <?= empty($data['is_warning']) || $data['is_warning'] == \App\Models\StockModel::IS_WARNING_NO ? '' : 'checked';?>>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">预警上下限%(当天)</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="day_warning_min" placeholder="下限%" autocomplete="off" class="layui-input" value="<?= $data['day_warning_min'] ?? '';?>">
-            </div>
-            <div class="layui-form-mid">-</div>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="day_warning_max" placeholder="上限%" autocomplete="off" class="layui-input" value="<?= $data['day_warning_max'] ?? '';?>">
-            </div>
+            <input type="checkbox" name="status" lay-skin="switch" value="1" <?= empty($data['status']) || $data['status'] == STATUS_ACTIVE ? 'checked' : '';?>>
         </div>
     </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label">成本价</label>
-        <div class="layui-input-block">
-            <input type="text" name="cost" required lay-verify="required" placeholder="成本价" autocomplete="off" class="layui-input" value="<?= $data['cost'] ?? '';?>">
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">@人手机号</label>
+            <div class="layui-input-block">
+                <textarea name="at_mobiles" placeholder="每行一个" class="layui-textarea"><?= $data['at_mobiles'] ?? '';?></textarea>
+            </div>
         </div>
-    </div>
-    <div class="layui-inline">
-        <label class="layui-form-label">预警上下限%(成本价)</label>
-        <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cost_warning_min" placeholder="下限%" autocomplete="off" class="layui-input" value="<?= $data['cost_warning_min'] ?? '';?>">
-        </div>
-        <div class="layui-form-mid">-</div>
-        <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cost_warning_max" placeholder="上限%" autocomplete="off" class="layui-input" value="<?= $data['cost_warning_max'] ?? '';?>">
-        </div>
-    </div>
 
 <!--    -->
 <!---->
@@ -82,8 +63,8 @@
 <!--    </div>-->
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" type="button" lay-submit lay-filter="formDemo">立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button class="layui-btn" type="button" lay-submit lay-filter="pushSetting">立即提交</button>
+<!--            <button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
         </div>
     </div>
 </form>
@@ -93,17 +74,15 @@
     //Demo
     layui.use('form', function(){
         var form = layui.form;
-
-
         form.render();  //需要加上这句才会渲染，文档居然没有。。。。
 
         //监听提交
-        form.on('submit(formDemo)', function(data){
-            console.log(data.field);
-            $.post(URL_PREFIX+'/stock/add', data.field, function(res){
+        form.on('submit(pushSetting)', function(formData){
+            var action = data.id ? 'edit/'+data.id : 'add';
+            $.post(URL_PREFIX+'/pushSetting/' + action, formData.field, function(res){
                 if (!layerAlert.code) {
                     // layer.close(layui.index);
-                    parent.location.href=URL_PREFIX+'/stock/index'
+                    parent.location.href=URL_PREFIX+'/pushSetting/index'
                 } else {
                     layerAlert(res.message, res.code);
                 }
