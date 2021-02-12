@@ -54,7 +54,8 @@ class BaseController extends Controller
 		parent::initController($request, $response, $logger);
         $this->session = Services::session();
         if (empty($_SESSION['logged_in']) || empty($_SESSION['user_id'])) {
-            if (!in_array($request->getUri()->getPath(),['home/index', 'home/login', 'home/logout', 'home/reg'])) {
+            // var_dump($request->getUri()->getPath());die;
+            if (!in_array($request->getUri()->getPath(),['/', 'home/index', 'home/login', 'home/logout', 'home/reg'])) {
                 return $response->redirect('/home/index');
             }
         }

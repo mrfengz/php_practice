@@ -23,7 +23,7 @@ class App extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $baseURL = 'http://localhost:8080/';
+	public $baseURL = 'http://stock.com/';
 
 	/**
 	 * --------------------------------------------------------------------------
@@ -36,7 +36,8 @@ class App extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $indexPage = 'index.php';
+	// public $indexPage = 'index.php';
+	public $indexPage = '';
 
 	/**
 	 * --------------------------------------------------------------------------
@@ -108,7 +109,8 @@ class App extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $appTimezone = 'America/Chicago';
+	// public $appTimezone = 'America/Chicago';
+	public $appTimezone = 'Asia/Shanghai';
 
 	/**
 	 * --------------------------------------------------------------------------
