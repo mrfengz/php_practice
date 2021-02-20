@@ -1,4 +1,5 @@
 const URL_PREFIX = location.origin+'/index.php';
+// const URL_PREFIX = location.origin;
 
 $.ajaxSetup({
     dataType:"JSON",

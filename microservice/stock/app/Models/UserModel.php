@@ -14,5 +14,5 @@ class UserModel extends BaseModel
 {
     protected $table = 'user';
 
-    protected $allowedFields = ['username', 'password', 'create', 'status', 'token'];
+    protected $allowedFields = ['username', 'password', 'create_time', 'status', 'token'];
 }

@@ -51,6 +51,8 @@ class Stock extends BaseController
             if ($msg = $this->verifyPostData($postData)) {
                 return $this->returnJson($msg, 1);
             }
+            $stockName = \StockApi::getStockName($postData['stock_type'] . $postData['stock_code']);
+            $postData['stock_name'] = strval($stockName);
             $model = new StockModel();
             if (!$id) {
                 $res = $model->insert($postData);

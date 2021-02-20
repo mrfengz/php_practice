@@ -68,15 +68,15 @@ function formatResult(string $val) {
 //创建WebSocket Server对象，监听0.0.0.0:9502端口
 $ws = new Swoole\WebSocket\Server('0.0.0.0', 8890);
 
-$ws->mydata = [];
+$redis = new Redis();
+$redis->pconnect('127.0.0.1');
+$redis->select(1);
 
-// 监听80端口
-// $ws->addlistener('127.0.0.1', 8080, SWOOLE_SOCK_TCP);
 
 $ws->set([
     'max_request' => 2,
     'worker_num' => 2,
-    // 'enable_coroutine' => true,
+    'enable_coroutine' => true,
 ]);
 
 $ws->on('connect', function($ws, $fd){
@@ -85,7 +85,6 @@ $ws->on('connect', function($ws, $fd){
 
 //监听WebSocket连接打开事件
 $ws->on('open', function ($ws, $request) {
-    // var_dump($request->fd, $request->server);
     $ws->push($request->fd, "hello, welcome\n");
 });
 
@@ -99,18 +98,18 @@ function calculatePercent($currentPrice, $cost) {
 }
 
 
-$ws->on('workerStart', function($ws, $workerId){
+$ws->on('workerStart', function($ws, $workerId)use($redis){
     if ($workerId == 0) {
-        $ws->tick(5000, function()use($ws){
+        $ws->tick(5000, function()use($ws,$redis){
             foreach ($ws->connections as $fd) {
-                if (!isset($ws->myData[$fd])) {
+                if (!$redis->hExists('fd-token', $fd)) {
                     continue;
                 }
 
                 $db = Db::getInstance();
-                $userToken = $ws->myData[$fd];
+                $userToken = $redis->hGet('fd-token', $fd);
 
-                echo $userToken . "\n";
+                // echo $userToken . "\n";
 
                 $connectionInfo = $ws->getClientInfo($fd);
                 // http请求的fd,不是实时剔除的，所以这里可能会出现http的连接，无法使用push(),会报错，不是websocket client
@@ -133,25 +132,24 @@ $ws->on('workerStart', function($ws, $workerId){
                     $stockCodes[$_code] = $row;
                 }
 
-                echo join(',', $codes) . "\n";
+                // echo join(',', $codes) . "\n";
 
                 $url = 'http://hq.sinajs.cn/list=' . join(',', $codes);
                 $res = Curl::httpRequest($url);
                 $res = formatResult($res);
 
-                print_r($res);
-
+                // print_r($res);
 
                 if (!$res) continue;
-                $_data = [];
+                $_data = ['当前时间' . date('H:i:s')];
                 foreach ($codes as $code) {
                     if (!$res[$code]) continue;
-                    $name = $res[0] ?: $code;
-                    $_data[] = $name . ": " . ($res[$code] ? $res[$code][3] : 'null');
+                    $tmp = $res[$code];
+                    $name = $tmp[0] ?: $code;
+                    $_data[] = $name . ": " . ($tmp[3] ?? 'null');
                 }
                 // socket 实时展示 5秒间隔
-                $data = json_encode(['time' => date('H:i:s'), 'price' => $_data], JSON_UNESCAPED_UNICODE);
-                $ws->push($fd, $data);
+                $ws->push($fd, join("\n", $_data));
 
                 // continue;
                 // 波动条件预警
@@ -164,11 +162,11 @@ $ws->on('workerStart', function($ws, $workerId){
                         if (!empty($config['day_warning_min']) || !empty($config['day_warning_max'])) {
                             $todayChangeRatio = calculatePercent($info[3], $info[1]);
                             if ($config['day_warning_min'] && $todayChangeRatio < $config['day_warning_min']) {
-                                $warningData[] = '止损提醒(当天波动)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                                $warningData[] = '止损提醒(开盘价:'. $info[1] .')： '.$info[0] . '达到设置下线，当前价为' . $info[3];
                             }
 
                             if ($config['day_warning_max'] && $todayChangeRatio > $config['day_warning_max']) {
-                                $warningData[] = '止盈提醒(当天波动)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                                $warningData[] = '止盈提醒(开盘价:'. $info[1] .')： '.$info[0] . '达到设置上线，当前价为' . $info[3];
                             }
                         }
                         // 基于成本价预测
@@ -177,11 +175,11 @@ $ws->on('workerStart', function($ws, $workerId){
                         } elseif (!empty($config['cost_warning_min']) || !empty($config['cost_warning_max'])) {
                             $costChangeRatio = calculatePercent($info[3], $config['cost']);
                             if ($config['cost_warning_min'] && $costChangeRatio < $config['cost_warning_min']) {
-                                $warningData[] = '止损提醒(基于成本价)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                                $warningData[] = '止损提醒(成本:'.$config['cost'].')： '.$info[0] . '达到设置下线，当前价为' . $info[3];
                             }
 
                             if ($config['cost_warning_max'] && $costChangeRatio > $config['cost_warning_max']) {
-                                $warningData[] = '止盈提醒(基于成本价)： '.$info[0] . '当天波动达到设置下线，当前价为' . $info[3];
+                                $warningData[] = '止盈提醒(成本' . $config['cost'] . ')： '.$info[0] . '达到设置上线，当前价为' . $info[3];
                             }
                         }
                     }
@@ -196,10 +194,13 @@ $ws->on('workerStart', function($ws, $workerId){
                                 'secret' => $row['secret'] ?: '',
                             ]);
                             $atMobiles = $row['at_mobiles'] ? explode(',', $row['at_mobiles']) : [];
-                            $res = $robot->sendText(join("\n", $warningData), $atMobiles);
-                            print_r($res);
+                            $res = json_decode($robot->sendText(join("\n", $warningData), $atMobiles), true);
+                            // print_r($res);
+                            if ($res['errcode']) {
+                                echo "api出错：" . $res['errmsg'] . "\n";
+                            }
                         } catch(\Exception $e) {
-                            echo $e->getMessage();
+                            echo '推送出错：'.$e->getMessage() . "\n";
                         }
                     }
                 }
@@ -232,13 +233,18 @@ $ws->on('workerStart', function($ws, $workerId){
     }
 });
 
+$ws->on('workerExit', function($ws){
+    Swoole\Timer::clearAll();
+});
+
 //监听WebSocket消息事件
-$ws->on('message', function ($ws, $frame) {
+$ws->on('message', function ($ws, $frame) use($redis) {
     if (substr($frame->data, 0, 6) === 'token=') {
         $token = substr($frame->data, 6);
-        $ws->mydata[$frame->fd] = $token;
+        // $ws->myData[$frame->fd] = $token;
+        $redis->hSet('fd-token', $frame->fd, $token);
     }
-    print_r($ws->mydata);
+    // print_r($ws->myData);
     echo "Message: {$frame->data}\n";
     // print_r($ws);
 //     Swoole\WebSocket\Server Object
@@ -359,8 +365,9 @@ $ws->on('message', function ($ws, $frame) {
 });
 
 //监听WebSocket连接关闭事件
-$ws->on('close', function ($ws, $fd) {
-    unset($ws->myData[$fd]);
+$ws->on('close', function ($ws, $fd)use($redis) {
+    // unset($ws->myData[$fd]);
+    $redis->hDel('fd-token', $fd);
     echo "client-{$fd} is closed\n";
 });
 

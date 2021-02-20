@@ -8,9 +8,10 @@
     <div class="layui-form-item">
         <label class="layui-form-label">股票类型</label>
         <div class="layui-input-block">
-            <select name="stock_type" lay-verify="required" value="<?= $data['stock_type'] ?? '';?>">
-                <option value="sh">上证</option>
-                <option value="sz">深证</option>
+            <?php $stockType = $data['stock_type'] ?? null;?>
+            <select name="stock_type" lay-verify="required">
+                <option value="sh" <?= $stockType == 'sh' ? 'selected' : '';?>>上证</option>
+                <option value="sz" <?= $stockType == 'sz' ? 'selected' : '';?>>深证</option>
             </select>
         </div>
     </div>

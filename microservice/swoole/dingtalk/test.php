@@ -11,11 +11,12 @@ include_once('lib/Helper.php');
 include_once('lib/Robot.php');
 
 // var_dump(Helper::getToken('fz123456'));die;
-
 $db = Db::getInstance();
 $username = 'august';
 $password = 'fz123456';
 
+print_r($db->fetchAll("show tables;"));
+die;
 $token = 'baba89017db5573a';
 
 $user = $db->fetchOne("SELECT * FROM `user` WHERE token=". $db->quote($token));

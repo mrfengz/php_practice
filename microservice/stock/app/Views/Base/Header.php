@@ -212,9 +212,9 @@
             <li class="menu-item hidden" id="login"><a href="javascript:void(0);">登录</a></li>
             <?php } else { ?>
                 <li class="menu-item hidden" id="logout"><a href="javascript:void(0);">退出</a></li>
-                <li class="menu-item hidden" id="add-stock"><a href="/stock/index">我的股票</a></li>
-                <li class="menu-item hidden" id="receive-notify"><a href="/notify/index">接收股价推送</a></li>
-                <li class="menu-item hidden" id="config-notify"><a href="/pushSetting/index">配置预警提醒</a></li>
+                <li class="menu-item hidden" id="add-stock"><a href="/index.php/stock/index">我的股票</a></li>
+                <li class="menu-item hidden" id="receive-notify"><a href="/index.php/notify/index">接收股价推送</a></li>
+                <li class="menu-item hidden" id="config-notify"><a href="/index.php/pushSetting/index">配置预警提醒</a></li>
             <?php }?>
 <!--            <li class="logo"><a href="https://codeigniter.com" target="_blank"><img height="44" title="CodeIgniter Logo"-->
 <!--                                                                                    alt="Visit CodeIgniter.com official website!"-->
