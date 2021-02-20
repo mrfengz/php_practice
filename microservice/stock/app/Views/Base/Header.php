@@ -49,14 +49,14 @@
             border-radius: 5px;
             color: rgba(0, 0, 0, .5);
             display: block;
-            height: 44px;
+            height: 30px;
             text-decoration: none;
         }
         header li.menu-item a {
             border-radius: 5px;
             margin: 5px 0;
-            height: 38px;
-            line-height: 36px;
+            height: 30px;
+            line-height: 30px;
             padding: .4rem .65rem;
             text-align: center;
         }
@@ -67,7 +67,7 @@
         }
         header .logo {
             float: left;
-            height: 44px;
+            height: 30px;
             padding: .4rem .5rem;
         }
         header .menu-toggle {
@@ -98,16 +98,16 @@
         header .heroe {
             margin: 0 auto;
             max-width: 1100px;
-            padding: 1rem 1.75rem 1.75rem 1.75rem;
+            padding: 1rem 0.75rem 0.75rem 0.75rem;
         }
-        header .heroe h1 {
-            font-size: 2.5rem;
-            font-weight: 500;
-        }
-        header .heroe h2 {
-            font-size: 1.5rem;
-            font-weight: 300;
-        }
+        /*header .heroe h1 {*/
+            /*font-size: 2.5rem;*/
+            /*font-weight: 500;*/
+        /*}*/
+        /*header .heroe h2 {*/
+            /*font-size: 1.5rem;*/
+            /*font-weight: 300;*/
+        /*}*/
         section {
             margin: 0 auto;
             max-width: 1100px;
