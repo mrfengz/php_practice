@@ -1,0 +1,19 @@
+{
+    "name": "imooc",
+    "description": "php framework",
+    "type": "framework",
+    "keywords": [
+        "PHP", "PHP Framework"
+    ],
+    "require": {
+        "filp/whoops": "^2.9",
+        "symfony/var-dumper": "*",
+        "php": ">=7.2",
+        "catfan/medoo": "*",
+        "twig/twig": "*"
+    },
+    "packagist": {
+        "type": "composer",
+        "url": "https://packagist.phpcomposer.com"
+    }
+}
