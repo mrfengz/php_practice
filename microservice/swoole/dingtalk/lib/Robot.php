@@ -21,7 +21,7 @@ class Robot
             throw new \InvalidArgumentException("参数必须有access_token", 1);
         }
         $this->accessToken = $config['access_token'];
-        if ($config['secret']) $this->secret = $config['secret'];
+        if (!empty($config['secret'])) $this->secret = $config['secret'];
     }
     /**
      * 发送钉钉通知消息
