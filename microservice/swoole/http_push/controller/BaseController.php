@@ -5,6 +5,8 @@
  * Date: 2021/3/19
  * Time: 16:35
  */
+namespace controller;
+
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

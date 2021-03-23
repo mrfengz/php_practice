@@ -5,7 +5,10 @@
  * Date: 2021/3/19
  * Time: 16:29
  */
-include __DIR__ . '/BaseController.php';
+namespace controller;
+// include __DIR__ . '/BaseController.php';
+use controller\BaseController;
+use model\AdminUserModel;
 
 class Message extends BaseController
 {
@@ -23,7 +26,14 @@ class Message extends BaseController
         ]);
         // 投递任务
         $this->server->task($data);
-        $this->response->setHeader("Content-Type"," text/html;charset=utf-8");
+
         $this->response->end("任务处理中...");
+    }
+
+    public function db()
+    {
+        $model = new AdminUserModel();
+        $res = $model->getOne("SELECT * FROM admin_user WHERE id=2");
+        print_r($res);
     }
 }

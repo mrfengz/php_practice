@@ -19,7 +19,6 @@ $serv->on('open', function (Swoole\WebSocket\Server $server, \Swoole\Http\Reques
     echo "server: handshake success with fd{$request->fd}\n";
 });
 
-
 $serv->on('message', function (Swoole\WebSocket\Server $server, \Swoole\WebSocket\Frame $frame) {
     echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
     $server->push($frame->fd, "this is server");
@@ -30,20 +29,16 @@ $serv->on('close', function ($ser, $fd) {
 });
 
 
-
-
 // http onRequest
 $serv->on('request', function(\Swoole\Http\Request $request, \Swoole\Http\Response $response){
     if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
         $response->end();
         return;
     }
-    list($controller, $action) = array_map('strtolower', explode('/', trim($request->server['request_uri'], '/')));
-    $controller = ucfirst($controller);
 
     global $serv;
-    (new $controller($request, $response, $serv))->$action();
-
+    (new \controller\Controller())->runAction($request, $response, $serv);
+    // (new $controller($request, $response, $serv))->$action();
     return ;
     global $serv;//调用外部的server
     // $server->connections 遍历所有websocket连接用户的fd，给所有用户推送
@@ -74,7 +69,7 @@ $serv->on('workerStart', function(\Swoole\Server $serv, $workerId){
         require_once __DIR__ . '/../task/Task.php';
     } else {
         // 载入
-        require_once __DIR__ . '/Message.php';
+        require_once __DIR__ . '/../controller/Controller.php';
     }
 
 
