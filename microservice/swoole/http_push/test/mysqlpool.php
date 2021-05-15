@@ -6,8 +6,10 @@
  * Time: 10:19
  */
 
+// Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+\Swoole\Runtime::enableCoroutine();
 //数据库连接池要常驻内存，才有用，怎么办呢，每一次请求之后，连接就断开了，貌似没啥好办法。
-include __DIR__ . '/MysqlDb.php';
+// include __DIR__ . '/../common/MysqlDb.php';
 
 class MysqlPool
 {
@@ -51,7 +53,6 @@ class MysqlPool
     {
         if (empty($this->pool)) {
             $this->config = $config;
-            // $this->pool = new \Co\Channel($config['master']['pool_size']);
             $this->pool = new \Swoole\Coroutine\Channel($config['master']['pool_size']);
             for($i=0; $i < $config['master']['pool_size']; $i++) {
                 go(function()use($config) {
@@ -88,8 +89,19 @@ class MysqlPool
     }
 }
 
-$conn = MysqlPool::getInstance()->get();
+// php-fpm无法利用连接池
+// $conn = MysqlPool::getInstance()->get();
 for ($i=0; $i<1000; $i++) {
-    $res=$conn->select("test1", ['id' => 100]);
-    print_r($res->fetchAll(PDO::FETCH_ASSOC));
+    // go(function(){
+        $conn = new \PDO('mysql:host=127.0.0.1;dbname=example_db;charset=utf8', 'august', 'fz123456');
+        $res=$conn->query("select * from test1 where id = " . mt_rand(1, 10000));
+        print_r($res->fetchAll(PDO::FETCH_ASSOC));
+
+    // });
+
+    // $res=$conn->select("test", ['id' => mt_rand(1, 10000)]);
+    // print_r($res->fetchAll(PDO::FETCH_ASSOC));
 }
+
+var_dump('hello');
+sleep(30);

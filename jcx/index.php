@@ -26,4 +26,3 @@ include APP_PATH . '/../ztf/start.php';
 // // 会将数组作为整体传递（一般要传递关联数组，而不是索引数组[会被按照顺序转为关联数组]），数组中的元素传递给对应的元素
 // call_user_func_array('test', ['aa' => 123, 'bb' => 'test', 0 => 'aaa', '1' => ['wawa']]); // p($args) 输出 123
 
-

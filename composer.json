@@ -1,6 +1,7 @@
 {
   "require": {
     "guzzlehttp/guzzle": "~6.0",
-    "elasticsearch/elasticsearch": "^7.0"
+    "elasticsearch/elasticsearch": "^7.0",
+    "nmred/kafka-php": "v0.2.0.8"
   }
 }
